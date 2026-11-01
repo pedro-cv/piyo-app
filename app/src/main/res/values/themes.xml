@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window theme only; all visual tokens live in Compose (ui/theme). -->
+    <style name="Theme.Piyo" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#F7F8F5</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+    <!-- Shown by the system before the first frame (Android 12+ natively, emulated below): the app
+         background with the launcher icon (green circle, 160 dp) in the middle, so the logo stands out and
+         the first Compose frame (SplashScreen, same background, same mark) continues it without a jump. -->
+    <style name="Theme.Piyo.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#F7F8F5</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Piyo</item>
+    </style>
+</resources>

@@ -1,0 +1,30 @@
+# secrets / local config
+keys.properties
+secrets.properties
+local.properties
+app/google-services.json
+*.jks
+*.keystore
+*.p12
+*.pem
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+# build
+.gradle/
+build/
+app/build/
+app/release/
+.idea/
+*.iml
+.kotlin/
+captures/
+*.apk
+*.aab
+*.hprof
+# misc
+__pycache__/
+*.log
+.DS_Store
+Thumbs.db

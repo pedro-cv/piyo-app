@@ -1,0 +1,8 @@
+# Copy to app/keys.properties (git-ignored). One build reads these for every environment.
+# Emulator: 10.0.2.2 is the PC's localhost. Phone on the same Wi-Fi: http://<PC-IPv4> (Caddy on port 80).
+PIYO_API_BASE_URL=http://10.0.2.2:8080
+# Empty = the self-hosted style served by the API (/v1/map/style.json). Set to use another style, e.g.
+# MAP_STYLE_URL=https://tiles.openfreemap.org/styles/liberty
+MAP_STYLE_URL=
+GEOCODER_URL=https://photon.komoot.io/api/
+# GOOGLE_MAPS_API_KEY=   (unused until a GoogleMapProvider is added; see docs/implementation/MAP_PROVIDERS.md)

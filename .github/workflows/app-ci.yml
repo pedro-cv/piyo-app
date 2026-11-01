@@ -1,0 +1,47 @@
+name: app
+# Works in the workspace (code under app/) and in the public piyo-app repo (code at the root).
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: app-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  unit-tests:
+    name: App unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Locate Gradle project
+        run: |
+          if [ -f app/gradlew ]; then echo "DIR=app" >> "$GITHUB_ENV"; else echo "DIR=." >> "$GITHUB_ENV"; fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
+      - name: Unit tests (no keys.properties: defaults must work)
+        working-directory: ${{ env.DIR }}
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:testDebugUnitTest --no-daemon --console=plain
+      - name: Lint (advisory)
+        working-directory: ${{ env.DIR }}
+        continue-on-error: true
+        run: ./gradlew :app:lintDebug --no-daemon --console=plain
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-reports
+          path: |
+            ${{ env.DIR }}/app/build/reports/tests/
+            ${{ env.DIR }}/app/build/reports/lint-results-debug.html
+          if-no-files-found: ignore
+          retention-days: 7

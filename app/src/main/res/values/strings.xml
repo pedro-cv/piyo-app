@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app_name is a resValue in build.gradle.kts -->
+    <string name="brand">piyo</string>
+    <string name="tagline">Sabé qué micro tomar, con o sin internet.</string>
+    <string name="city">Santa Cruz de la Sierra</string>
+
+    <!-- Tabs -->
+    <string name="tab_search">Buscar</string>
+    <string name="tab_lines">Líneas</string>
+    <string name="tab_favorites">Favoritos</string>
+    <string name="tab_contribute">Datos</string>
+
+    <!-- Generic -->
+    <string name="back">Volver</string>
+    <string name="menu">Menú</string>
+    <string name="close">Cerrar</string>
+    <string name="min">min</string>
+    <string name="fare_prefix">Bs</string>
+    <string name="osm_credit">© OpenStreetMap</string>
+    <string name="osm_credit_long">Datos © OpenStreetMap contributors (ODbL)</string>
+    <string name="my_location">Mi ubicación</string>
+    <string name="center_on_me">Centrar en mi ubicación</string>
+    <string name="map_layers">Capas del mapa</string>
+
+    <!-- Offline banner -->
+    <string name="offline_banner">Sin conexión · datos v%1$d del %2$s · elegí el destino en el mapa o con tu ubicación</string>
+    <string name="offline_banner_short">Sin conexión · las líneas y el planificador funcionan; buscar direcciones no</string>
+
+    <!-- Home -->
+    <string name="where_to">¿A dónde vas?</string>
+    <string name="from">Desde</string>
+    <string name="home_place">Casa</string>
+    <string name="work_place">Trabajo</string>
+    <string name="add_place">Agregar</string>
+    <string name="last_route">Última ruta</string>
+    <string name="near_lines">Pasan cerca (≤ 300 m)</string>
+    <string name="missing_line_cta">¿Falta una línea o un trufi? Pedila acá</string>
+    <string name="n_lines">%1$d línea</string>
+    <string name="n_lines_plural">%1$d líneas</string>
+    <string name="n_transfers">%1$d transbordos</string>
+    <string name="n_transfer_one">%1$d transbordo</string>
+
+    <!-- Search -->
+    <string name="search_hint">Buscá una dirección, barrio o lugar</string>
+    <string name="search_title">Buscar</string>
+    <string name="origin_title">Desde</string>
+    <string name="search_recent">Recientes</string>
+    <string name="search_results">Resultados</string>
+    <string name="search_empty">Sin resultados en Santa Cruz. Probá con el barrio o una avenida.</string>
+    <string name="pick_on_map">Elegir en el mapa</string>
+    <string name="pick_move_hint">Mové el mapa hasta ubicar el punto</string>
+    <string name="use_point">Usar este punto</string>
+    <string name="resolving_address">Buscando la dirección…</string>
+    <string name="point_on_map">Punto en el mapa</string>
+    <string name="choose_origin">¿Desde dónde salís?</string>
+    <string name="walking_only">Caminando</string>
+    <string name="walk_all_the_way">Caminá %1$d m hasta %2$s</string>
+    <string name="arrive_walking">Llegás caminando · %1$d min</string>
+
+    <!-- Results -->
+    <string name="route_title">Ruta</string>
+    <string name="swap">Invertir origen y destino</string>
+    <string name="filter_transfers">Menos transbordos</string>
+    <string name="filter_walk">Menos caminata</string>
+    <string name="results_more">Ver %1$d rutas más</string>
+    <string name="results_less">Ver menos</string>
+    <string name="fares_line">Pasaje por micro: Bs 3,50 adultos · Bs 1 universitarios y adultos mayores · Bs 0,50 escolares.</string>
+    <string name="results_note">Minutos estimados por distancia (micro a 18 km/h). Los micros no tienen horario.</string>
+    <string name="see_on_map">Ver en el mapa</string>
+    <string name="no_routes">No encontramos micros para este viaje. Probá acercar el destino a una avenida.</string>
+    <string name="walk_m">%1$d m</string>
+    <string name="board_at">Subí en %1$s</string>
+    <string name="transfer_at">Transbordo en %1$s</string>
+    <string name="more_walk">Más caminata</string>
+
+    <!-- Route detail -->
+    <string name="arrive_at">min · llegás %1$s</string>
+    <string name="save_route">Guardar ruta</string>
+    <string name="walk_to">Caminá %1$d m hasta %2$s</string>
+    <string name="wait_corner">%1$d min · esperá el micro en la esquina</string>
+    <string name="ride_detail">%1$s km · %2$d min · Bs %3$s · bajás a pedido</string>
+    <string name="get_off_at">Bajá en %1$s</string>
+    <string name="walk_final">Caminá %1$d m · %2$d min · %3$s</string>
+    <string name="start_trip">Empezar</string>
+    <string name="end_trip">Terminar viaje</string>
+    <string name="board_here">subí acá</string>
+    <string name="arrival_time">Llegás %1$s</string>
+    <string name="action_steps">Ver pasos</string>
+    <string name="action_share">Compartir</string>
+    <string name="fit_route">Ver toda la ruta</string>
+    <string name="share_text">Piyo · %1$s → %2$s · %3$d min · línea %4$s · Bs %5$s</string>
+    <string name="trip_in_progress">En viaje · %1$d min</string>
+    <string name="guide_walk_to">Caminá %1$s hasta %2$s</string>
+    <string name="guide_then_board">Ahí subí al %1$s</string>
+    <string name="guide_ride">Viajás en el %1$s · bajás en %2$s</string>
+    <string name="guide_prepare">Preparate: bajá en %1$s</string>
+    <string name="guide_remaining">faltan %1$s</string>
+    <string name="guide_off_route">Estás a %1$s de la ruta</string>
+    <string name="arrived_title">Llegaste a %1$s</string>
+    <string name="arrived_body">Terminá el viaje para guardarlo en tus viajes.</string>
+    <string name="keep_going">Seguir</string>
+    <string name="location_needed_title">Sin ubicación no te podemos guiar</string>
+    <string name="location_needed_body">Activá el permiso de ubicación de Piyo en Ajustes del teléfono para seguir el viaje en el mapa.</string>
+
+    <!-- Trip history -->
+    <string name="trips_title">Tus viajes</string>
+    <string name="trips_empty">Los viajes que termines quedan acá para repetirlos.</string>
+    <string name="trip_row_meta">%1$s · %2$d min</string>
+    <string name="trip_today">hoy</string>
+    <string name="trip_yesterday">ayer</string>
+    <string name="trip_planned_actual">previsto %1$d min · real %2$d min</string>
+    <string name="clear_trips">Borrar historial</string>
+    <string name="remove_trip">Quitar viaje</string>
+
+    <!-- Lines directory -->
+    <string name="lines_title">Líneas</string>
+    <string name="lines_search_hint">Número de línea o barrio</string>
+    <string name="clear_search">Borrar búsqueda</string>
+    <string name="n_branches">· %1$d ramales</string>
+    <string name="walk_straight_hint">distancia en línea recta · elegí la calle que prefieras</string>
+    <string name="passes_at">pasa a %1$s</string>
+    <string name="line_n">Línea %1$s</string>
+
+    <!-- Line detail -->
+    <string name="direction_ida">Ida · %1$s</string>
+    <string name="direction_vuelta">Vuelta · %1$s</string>
+    <string name="branch_main">Principal</string>
+    <string name="ride_branch">Ramal %1$s · hacia %2$s</string>
+    <string name="favorite_line">Línea favorita</string>
+    <string name="report_error">Reportar error</string>
+    <string name="line_subtitle">%1$s · pasa a %2$s de vos por %3$s</string>
+    <string name="mode_micro">Micro</string>
+    <string name="mode_trufi">Trufi</string>
+    <string name="near_you">a %1$s de vos</string>
+    <string name="start_stop">inicio · sale cuando se llena</string>
+    <string name="end_stop">fin</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favoritos</string>
+    <string name="places">Lugares</string>
+    <string name="tap_to_go">%1$s · tocá para ir</string>
+    <string name="choose_address">Elegí una dirección</string>
+    <string name="add_place_long">Agregar lugar</string>
+    <string name="remove_favorite">Quitar de favoritos</string>
+    <string name="favorites_note">Todo se guarda en tu teléfono. Sin cuenta, sin sincronización.</string>
+    <string name="no_favorite_lines">Marcá una línea con la estrella para verla acá.</string>
+    <string name="place_title_new">Nuevo lugar</string>
+    <string name="place_title_edit">Editar lugar</string>
+    <string name="place_name">Nombre</string>
+    <string name="place_name_hint">Ej.: Casa de mamá</string>
+    <string name="place_icon">Ícono</string>
+    <string name="place_color">Color</string>
+    <string name="place_address">Dirección</string>
+    <string name="place_change_address">Cambiar dirección</string>
+    <string name="place_save">Guardar lugar</string>
+    <string name="place_delete">Quitar lugar</string>
+    <string name="place_delete_confirm">¿Quitar %1$s de tus lugares?</string>
+    <string name="place_edit">Editar lugar</string>
+    <string name="place_title">Lugar</string>
+    <string name="icon_home">Casa</string>
+    <string name="icon_work">Trabajo</string>
+    <string name="icon_school">Estudio</string>
+    <string name="icon_gym">Gimnasio</string>
+    <string name="icon_health">Salud</string>
+    <string name="icon_shopping">Compras</string>
+    <string name="icon_food">Comida</string>
+    <string name="icon_family">Familia</string>
+    <string name="icon_church">Iglesia</string>
+    <string name="icon_park">Parque</string>
+    <string name="icon_place">Lugar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="save">Guardar</string>
+    <string name="rename">Renombrar</string>
+    <string name="export">Exportar</string>
+    <string name="edit">Editar</string>
+    <string name="remove">Quitar</string>
+
+    <!-- Data & connection -->
+    <string name="data_title">Datos y conexión</string>
+    <string name="data_lines">Líneas de micro</string>
+    <string name="data_lines_count">Líneas</string>
+    <string name="data_size">Tamaño</string>
+    <string name="data_updated">Actualizado</string>
+    <string name="data_city_map">Mapa de la ciudad</string>
+    <string name="data_coverage">Cobertura</string>
+    <string name="data_metro">área metropolitana</string>
+    <string name="data_refresh">Se actualiza</string>
+    <string name="data_refresh_value">1–2 veces al año</string>
+    <string name="check_update">Buscar actualización</string>
+    <string name="check_update_note">Revisamos si hay una versión nueva (≈ 1 KB). La descarga completa pesa menos que una foto.</string>
+    <string name="check_update_offline">Sin conexión. Al conectarte podés buscar una versión nueva (≈ 1 KB); la descarga completa pesa menos que una foto.</string>
+    <string name="data_map_offline">Sin conexión</string>
+    <string name="data_map_offline_value">zonas ya vistas (caché)</string>
+    <string name="data_search">Buscar direcciones</string>
+    <string name="data_search_value">necesita internet</string>
+    <string name="fares_title">Pasaje en micro</string>
+    <string name="fare_adult">Adultos</string>
+    <string name="fare_adult_value">Bs 3,50</string>
+    <string name="fare_university">Universitarios</string>
+    <string name="fare_university_value">Bs 1</string>
+    <string name="fare_elderly">Adultos mayores</string>
+    <string name="fare_elderly_value">Bs 1</string>
+    <string name="fare_school">Escolares</string>
+    <string name="fare_school_value">Bs 0,50</string>
+    <string name="fares_note">Se paga por cada micro que tomás. Las rutas muestran el pasaje de adultos.</string>
+    <string name="language">Idioma</string>
+    <string name="spanish">Español</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="dark_follows_system">Sigue al sistema</string>
+    <string name="dark_on">Activado</string>
+    <string name="dark_off">Desactivado</string>
+    <string name="notifications">Avisarme cuando se apliquen mis reportes y aportes</string>
+    <string name="notifications_on">Activado</string>
+    <string name="notifications_off">Desactivado</string>
+    <string name="notifications_denied">El teléfono tiene los avisos de Piyo bloqueados. Activalos en Ajustes o dejá el aviso apagado.</string>
+    <string name="open_settings">Abrir ajustes</string>
+    <string name="data_provider_in_use">Datos en uso</string>
+    <string name="about">Acerca de · licencias</string>
+    <string name="give_feedback">Opinar sobre Piyo</string>
+    <string name="days_ago">hace %1$d días</string>
+    <string name="update_available">Hay una versión nueva: v%1$d</string>
+    <string name="up_to_date">Tenés la última versión</string>
+    <string name="update_failed">No se pudo revisar. Probá de nuevo con red.</string>
+
+    <!-- Report -->
+    <string name="report_title">Reportar</string>
+    <string name="whats_wrong">¿Qué está mal?</string>
+    <string name="type_stop">Parada incorrecta</string>
+    <string name="type_route">Recorrido incorrecto</string>
+    <string name="type_gone">Ya no pasa por acá</string>
+    <string name="type_missing">Falta una línea o trufi</string>
+    <string name="type_other">Otra cosa</string>
+    <string name="map_title_stop">¿Dónde está la parada equivocada?</string>
+    <string name="map_title_route">¿Por dónde pasa en realidad?</string>
+    <string name="map_title_gone">¿Desde dónde ya no pasa?</string>
+    <string name="map_title_missing">¿Por dónde pasa la línea que falta?</string>
+    <string name="map_title_other">Marcá el lugar</string>
+    <string name="tap_map_hint">Tocá el mapa para mover el punto</string>
+    <string name="tell_more">Contanos más (opcional)</string>
+    <string name="report_placeholder">Ej.: el 98 ya no entra a la UV 232, ahora sigue por Av. Cañoto</string>
+    <string name="quota_left">Te quedan %1$d de %2$d reportes hoy</string>
+    <string name="send_report">Enviar reporte</string>
+    <string name="report_note">Se envía cuando haya red. Es anónimo. Los reportes revisados como falsos bloquean esta función 30 días en este teléfono.</string>
+    <string name="report_sent">Reporte #%1$s enviado</string>
+    <string name="report_queued">Reporte guardado. Se envía cuando haya red.</string>
+    <string name="report_blocked">Podés reportar de nuevo el %1$s</string>
+    <string name="report_quota_exceeded">Ya enviaste 3 reportes hoy. Mañana podés seguir.</string>
+    <string name="report_contribute_title">¿Conocés bien el recorrido? Corregilo vos</string>
+    <string name="report_contribute_body">Dibujá la ruta en el mapa y enviala para revisión. Lleva unos minutos. Tu aporte se revisa junto con los datos de líneas del proveedor que tengas seleccionado, así los revisores tienen en cuenta los cambios que ya hubo en los datos oficiales.</string>
+    <string name="report_contribute_cta">Ir a Datos</string>
+
+    <!-- NPS -->
+    <string name="arrived">Llegaste</string>
+    <string name="nps_question">Llegaste. ¿Qué tan probable es que recomiendes Piyo a alguien?</string>
+    <string name="nps_sub">Una sola pregunta, anónima. Aparece como mucho una vez cada 3 meses.</string>
+    <string name="nps_low">Nada probable</string>
+    <string name="nps_high">Muy probable</string>
+    <string name="not_now">Ahora no</string>
+    <string name="next">Seguir</string>
+    <string name="nps_title_low">¿Qué te falló?</string>
+    <string name="nps_title_mid">¿Qué podemos mejorar?</string>
+    <string name="nps_title_high">¡Gracias! ¿Qué te gustó más?</string>
+    <string name="nps_tap_hint">Tocá lo que corresponda. Escribir es opcional.</string>
+    <string name="tag_missing_lines">Faltan líneas</string>
+    <string name="tag_wrong_routes">Recorridos mal</string>
+    <string name="tag_map">El mapa</string>
+    <string name="tag_slow">Es lento</string>
+    <string name="tag_useful">Me sirvió</string>
+    <string name="tag_other">Otra cosa</string>
+    <string name="few_words">En pocas palabras (opcional)</string>
+    <string name="nps_placeholder">Ej.: el 76 ya no pasa por Cañoto</string>
+    <string name="max_140">máx. 140 caracteres</string>
+    <string name="send_without_comment">Enviar sin comentar</string>
+    <string name="send">Enviar</string>
+    <string name="nps_thanks">Gracias. Se envía cuando haya red.</string>
+    <string name="open_source_note">Piyo es de código abierto. Si querés proponer una mejora o ver qué se está arreglando:</string>
+    <string name="propose_improvement">Proponer una mejora</string>
+    <string name="opens_github">Se abre en GitHub · podés escribir en español</string>
+    <string name="total_fare">%1$d min en total · Bs %2$s</string>
+
+    <!-- Splash / first load -->
+    <string name="first_load_title">Listo para andar, con o sin internet</string>
+    <string name="first_load_lead">Las líneas y el planificador vienen incluidos y funcionan sin internet. Buscar direcciones por nombre y ver zonas nuevas del mapa necesitan conexión. Si hay red, buscamos la versión más nueva.</string>
+    <string name="bundle_included">Líneas de micro y trufi</string>
+    <string name="bundle_included_sub">%1$d líneas incluidas · versión %2$d</string>
+    <string name="updating_to">Actualizando a la versión %1$d</string>
+    <string name="downloaded_of">%1$s · %2$s descargados</string>
+    <string name="offline_map">Mapa de la ciudad</string>
+    <string name="offline_map_sub">Se carga al usarlo; las zonas que ya viste quedan guardadas y se ven sin conexión.</string>
+    <string name="later">Más tarde</string>
+    <string name="start_using">Empezar a usar Piyo</string>
+    <string name="first_load_note">Sin cuenta. Sin permisos de contactos ni fotos. Datos abiertos con crédito a sus fuentes.</string>
+
+    <!-- Thanks -->
+    <string name="thanks_title">Gracias por ser parte</string>
+    <string name="thanks_lead">Tu reporte, junto con los de otros vecinos, ya está en los datos de tu teléfono. Así se mantiene Piyo: entre todos.</string>
+    <string name="updated_to_version">Actualizadas a la versión %1$d</string>
+    <string name="includes">Incluye</string>
+    <string name="includes_value">tu reporte y otros de la comunidad</string>
+    <string name="see_lines">Ver las líneas</string>
+    <string name="back_home">Volver al inicio</string>
+    <string name="notif_channel">Actualizaciones de datos</string>
+    <string name="notif_title">Piyo se actualizó con tu reporte</string>
+    <string name="notif_text">Y con los de otros vecinos. Gracias por ser parte.</string>
+
+    <!-- Contribute (Aportar) -->
+    <string name="contribute_title">Datos</string>
+    <string name="contribute_intro">Actualizá los datos oficiales, elegí cuáles usa Piyo y agregá o corregí recorridos de micros, trufis y otros transportes. Lo que dibujás se guarda en tu teléfono como un proveedor de datos propio; vos elegís si usarlo y qué enviar a revisión.</string>
+    <string name="swap_directions">Invertir el sentido de los recorridos</string>
+    <string name="swap_directions_sub">Cada recorrido se recorre al revés: el final pasa a ser el inicio y todos los puntos se invierten</string>
+    <string name="swap_done">Recorridos invertidos en la línea %1$s. Revisá origen y destino.</string>
+    <string name="official_data">Datos oficiales</string>
+    <string name="official_data_meta">v%1$d · %2$d líneas · %3$s</string>
+    <string name="provider_meta">%1$d rutas · %2$s</string>
+    <string name="provider_meta_one">1 ruta · %1$s</string>
+    <string name="provider_meta_empty">Sin rutas todavía</string>
+    <string name="provider_import">Importar archivo</string>
+    <string name="provider_imported">Proveedor "%1$s" importado con %2$d rutas</string>
+    <string name="provider_import_failed">No es un archivo de proveedor de Piyo válido.</string>
+    <string name="provider_delete_title">¿Eliminar "%1$s"?</string>
+    <string name="provider_delete_body">Se borran de este teléfono las rutas de este proveedor (%1$d). Volvés a los datos oficiales. Si querés conservarlas, exportalas antes.</string>
+    <string name="provider_rename_title">Nombre del proveedor</string>
+    <string name="provider_name_hint">Ej.: Trufis del Plan 3000</string>
+    <string name="provider_new_title">Guardar en un proveedor nuevo</string>
+    <string name="provider_new_body">Tus rutas se guardan aparte de los datos oficiales, con el nombre que elijas. Podés cambiarlo después.</string>
+    <string name="my_routes">Rutas de %1$s</string>
+    <string name="my_routes_empty">Todavía no hay rutas en este proveedor. Agregá una nueva o corregí una existente.</string>
+    <string name="route_added">Nueva</string>
+    <string name="route_updated">Actualizada</string>
+    <string name="route_unsent">Sin enviar</string>
+    <string name="route_sent">Enviada · en revisión</string>
+    <string name="route_accepted">Aceptada</string>
+    <string name="route_rejected">Rechazada</string>
+    <string name="add_or_fix">Agregar o corregir</string>
+    <string name="add_route">Agregar ruta nueva</string>
+    <string name="fix_route">Corregir una ruta existente</string>
+    <string name="pick_line_title">¿Qué línea querés corregir?</string>
+    <string name="pick_variant_title">¿Qué sentido?</string>
+    <string name="send_contributions">Enviar aportes (%1$d)</string>
+    <string name="send_contributions_title">Enviar a revisión</string>
+    <string name="send_contributions_body">Se envían solo las rutas que marques, con la versión de datos en la que te basaste. Un revisor las compara con los datos oficiales antes de publicarlas.</string>
+    <string name="contrib_quota_left">Te quedan %1$d de %2$d envíos este mes</string>
+    <string name="contrib_quota_reset">Se renueva el %1$s</string>
+    <string name="contrib_sent">Aporte #%1$s enviado. Te avisamos cuando se revise.</string>
+    <string name="contrib_blocked">Podés enviar aportes de nuevo el %1$s</string>
+    <string name="contrib_quota_exceeded">Ya usaste tus envíos de este mes.</string>
+    <string name="contrib_failed">No se pudo enviar. Probá de nuevo con red.</string>
+    <string name="contrib_invalid">El servidor rechazó el aporte: %1$s</string>
+    <string name="contrib_comment_hint">Comentario para quien revisa (opcional)</string>
+    <string name="contribute_note">Los aportes son anónimos. El límite mensual existe para que cada ruta se pueda verificar con calma. Las rutas de tu proveedor siguen en tu teléfono aunque no las envíes.</string>
+    <string name="editor_title_new">Nueva ruta</string>
+    <string name="editor_title_edit">Corregir %1$s</string>
+    <string name="tool_add">Agregar</string>
+    <string name="tool_move">Mover</string>
+    <string name="color_custom_title">Color personalizado</string>
+    <string name="color_hue">Tono</string>
+    <string name="color_saturation">Saturación</string>
+    <string name="color_lightness">Claridad</string>
+    <string name="color_custom_note">Piyo suaviza los colores muy claros o muy chillones para que el número se lea en blanco.</string>
+    <string name="use_color">Usar este color</string>
+    <string name="tool_insert">Insertar</string>
+    <string name="tool_delete">Borrar punto</string>
+    <string name="tool_reverse">Invertir</string>
+    <string name="undo">Deshacer</string>
+    <string name="clear_points">Limpiar</string>
+    <string name="editor_hint_add">Tocá el mapa para agregar puntos al final del recorrido</string>
+    <string name="editor_hint_move">Mantené apretado un punto y arrastralo a su lugar</string>
+    <string name="editor_hint_insert">Tocá entre dos puntos para insertar uno nuevo</string>
+    <string name="editor_hint_delete">Tocá cerca del punto que querés borrar</string>
+    <string name="editor_stats">%1$s · %2$d puntos</string>
+    <string name="route_data">Datos de la ruta</string>
+    <string name="route_number">Número</string>
+    <string name="route_name">Nombre</string>
+    <string name="route_type">Tipo</string>
+    <string name="route_direction">Sentido</string>
+    <string name="route_origin">Desde</string>
+    <string name="route_headsign">Hacia</string>
+    <string name="mode_other">Otro</string>
+    <string name="direction_ida_short">Ida</string>
+    <string name="direction_vuelta_short">Vuelta</string>
+    <string name="save_route_btn">Guardar ruta</string>
+    <string name="editor_need_points">Marcá al menos 2 puntos en el mapa</string>
+    <string name="editor_need_fields">Completá el número y hacia dónde va</string>
+    <string name="editor_saved">Ruta guardada en "%1$s"</string>
+    <string name="editor_discard_body">¿Salir sin guardar? Se pierde el recorrido que dibujaste.</string>
+    <string name="editor_discard">Salir sin guardar</string>
+    <string name="local_badge_added">nueva</string>
+    <string name="local_badge_updated">editada</string>
+    <string name="using_provider">Usando "%1$s"</string>
+</resources>
