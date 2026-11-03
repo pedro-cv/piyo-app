@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import bo.piyo.app.ui.components.Tab
 import bo.piyo.app.ui.screens.AboutScreen
-import bo.piyo.app.ui.screens.DataScreen
+import bo.piyo.app.ui.screens.SettingsScreen
 import bo.piyo.app.ui.screens.FirstLoadScreen
 import bo.piyo.app.ui.screens.LineDetailScreen
 import bo.piyo.app.ui.screens.ReportScreen
@@ -50,7 +50,7 @@ fun PiyoNavHost(startRoute: Any) {
                 onRoute = { id -> nav.navigate(RouteDetailRoute(id)) },
                 onLine = { id -> nav.navigate(LineDetailRoute(id)) },
                 onReportMissing = { nav.navigate(ReportRoute(type = "missing")) },
-                onMenu = { nav.navigate(DataRoute) },
+                onSettings = { nav.navigate(SettingsRoute) },
                 onPickPlace = { kind -> nav.navigate(SearchRoute(purpose = kind)) },
                 onEditRoute = { lineId, variantId -> nav.navigate(RouteEditorRoute(lineId, variantId)) },
             )
@@ -78,7 +78,7 @@ fun PiyoNavHost(startRoute: Any) {
                 onTab = { nav.tab(session, it) },
             )
         }
-        composable<DataRoute> { DataScreen(onBack = { nav.popBackStack() }, onAbout = { nav.navigate(AboutRoute) }) }
+        composable<SettingsRoute> { SettingsScreen(onBack = { nav.popBackStack() }, onAbout = { nav.navigate(AboutRoute) }) }
         composable<AboutRoute> { AboutScreen(onBack = { nav.popBackStack() }) }
         composable<ReportRoute> { entry ->
             val r = entry.toRoute<ReportRoute>()

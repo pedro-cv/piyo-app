@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
         splash.setOnExitAnimationListener { v -> v.view.animate().alpha(0f).setDuration(220L).withEndAction { v.remove() }.start() }
         lifecycleScope.launch {
             container.lines.load()
+            container.mapProvider.prepare() // first launch: unpacks the bundled city map (~11 MB) behind the splash
             container.settings.installId()
             container.location.refresh()
             val firstRunDone = container.settings.firstRunDone.first()

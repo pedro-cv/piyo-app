@@ -26,7 +26,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
-      - name: Unit tests (no keys.properties: defaults must work)
+      - name: "Unit tests (no keys.properties: defaults must work)"
         working-directory: ${{ env.DIR }}
         run: |
           chmod +x gradlew

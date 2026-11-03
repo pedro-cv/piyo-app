@@ -26,7 +26,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.UploadFile
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Send
@@ -93,7 +93,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit) {
+fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit, onSettings: () -> Unit) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
     val ctx = LocalContext.current
@@ -155,13 +155,12 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit)
     fun export(meta: ProviderMeta) = scope.launch {
         val f = c.providers.exportFile(meta.id) ?: return@launch
         val uri = FileProvider.getUriForFile(ctx, ctx.packageName + ".files", f)
-        val send = Intent(Intent.ACTION_SEND).setType("application/json").putExtra(Intent.EXTRA_STREAM, uri).putExtra(Intent.EXTRA_SUBJECT, "Piyo · " + meta.name).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val send = Intent(Intent.ACTION_SEND).setType("application/json").putExtra(Intent.EXTRA_STREAM, uri).putExtra(Intent.EXTRA_SUBJECT, "piyo · " + meta.name).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         ctx.startActivity(Intent.createChooser(send, meta.name))
     }
 
-    Page(title = stringResource(R.string.contribute_title), actions = {
-        IconCircleButton(Icons.Rounded.FileDownload, stringResource(R.string.provider_import), onClick = { importer.launch(arrayOf("application/json", "text/plain", "*/*")) })
-    }) {
+    // The top-right slot is the same gear as on every tab; importing a routes file is a labelled action below.
+    Page(title = stringResource(R.string.contribute_title), actions = { SettingsAction(onSettings) }) {
         Note(stringResource(R.string.contribute_intro))
         message?.let { Text(it, color = t.primary, fontSize = 13.sp, fontWeight = FontWeight.Medium) }
 
@@ -184,7 +183,7 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit)
                     onClick = { scope.launch { c.providers.activate(p.id) } }, divider = i < providers.lastIndex,
                     menu = {
                         Box {
-                            IconCircleButton(Icons.Rounded.MoreVert, "", tint = t.muted, onClick = { menuFor = p.id })
+                            IconCircleButton(Icons.Rounded.MoreVert, stringResource(R.string.more_options), tint = t.muted, onClick = { menuFor = p.id })
                             DropdownMenu(expanded = menuFor == p.id, onDismissRequest = { menuFor = null }) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.rename)) }, onClick = { menuFor = null; renaming = p })
                                 DropdownMenuItem(text = { Text(stringResource(R.string.export)) }, onClick = { menuFor = null; export(p) })
@@ -209,7 +208,7 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit)
                         leading = { LineChip(line) },
                         trailing = {
                             Box {
-                                IconCircleButton(Icons.Rounded.MoreVert, "", tint = t.muted, onClick = { routeMenu = line.lineId })
+                                IconCircleButton(Icons.Rounded.MoreVert, stringResource(R.string.more_options), tint = t.muted, onClick = { routeMenu = line.lineId })
                                 DropdownMenu(expanded = routeMenu == line.lineId, onDismissRequest = { routeMenu = null }) {
                                     line.variants.forEach { v ->
                                         DropdownMenuItem(text = { Text(stringResource(R.string.edit) + " · " + directionLabel(v)) }, onClick = { routeMenu = null; onEditRoute(line.lineId, v.variantId) })
@@ -237,6 +236,7 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit)
         SectionHeader(stringResource(R.string.add_or_fix))
         PiyoButton(stringResource(R.string.add_route), icon = Icons.Rounded.Add, onClick = { onEditRoute(null, null) })
         PiyoButton(stringResource(R.string.fix_route), primary = false, icon = Icons.Rounded.Edit, onClick = { pickLine = true })
+        PiyoButton(stringResource(R.string.provider_import), primary = false, icon = Icons.Rounded.UploadFile, onClick = { importer.launch(arrayOf("application/json", "text/plain", "*/*")) })
         val sendable = prov?.lines?.filter { l -> prov.edit(l.lineId)?.sent.let { it == null || it.status == "rejected" } } ?: emptyList()
         if (sendable.isNotEmpty()) PiyoButton(stringResource(R.string.send_contributions, sendable.size), primary = false, icon = Icons.Rounded.Send, onClick = { sending = true })
         Note(stringResource(R.string.contribute_note))

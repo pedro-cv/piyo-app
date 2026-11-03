@@ -44,7 +44,8 @@ Windows: use `gradlew.bat`. Without `keys.properties` the app talks to `http://1
 
 ## Rules that matter most here
 
-1. No secrets, no analytics, no ads, no accounts, no third-party SDK that phones home.
+1. No secrets, no analytics, no ads, no accounts, no third-party SDK that phones home (sole exception:
+   `firebase-messaging`, opt-in push, `data/push/`, PRIVACY.md §Push).
    `keys.properties` is ignored; new keys get a default in `build.gradle.kts` and a line in the `.example`.
 2. Offline first: everything except address search, unseen map tiles and sending things must work with
    no network, and the UI says so honestly.

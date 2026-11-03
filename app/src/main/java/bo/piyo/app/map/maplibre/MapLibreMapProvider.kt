@@ -40,21 +40,30 @@ import org.maplibre.geojson.LineString
 import org.maplibre.geojson.Point
 
 /**
- * The app's map: MapLibre Native (open source) rendering the style served by the Piyo API (self-hosted
- * Protomaps tiles, glyphs and sprites; docs/implementation/MAP_HOSTING.md). The style URL gets
- * `?theme=light|dark` appended when it points at our API. Lines and points are two GeoJSON sources
- * updated on every recomposition; rides get a white casing, the line colour and direction chevrons
+ * The app's map: MapLibre Native (open source). With no [styleUrl] it renders the city map bundled in the
+ * APK ([BundledMap]: Protomaps tiles + light/dark styles with the same layers, fully offline). A [styleUrl]
+ * overrides it: the Piyo API's own style (`/v1/map/style.json`, Docker stack; `?theme=light|dark` is
+ * appended), or any hosted style, switched to [darkStyleUrl] in dark theme when one is configured
+ * (docs/implementation/MAP_HOSTING.md). Lines and points are two GeoJSON sources updated on every recomposition; rides get a white casing, the line colour and direction chevrons
  * placed along the line (symbol layer), walks are dashed, points are circles sized by kind.
- * The offline PMTiles download (docs/03 §4) is a later step.
  */
 class MapLibreMapProvider(
     context: Context,
     private val styleUrl: String,
+    private val darkStyleUrl: String,
     private val geocoder: PhotonGeocoder,
 ) : MapProvider {
     init { MapLibre.getInstance(context) }
 
-    override val attribution = "© OpenStreetMap contributors · OpenFreeMap"
+    private val bundled = if (styleUrl.isBlank()) BundledMap(context.applicationContext) else null
+
+    override val attribution = when {
+        bundled != null || styleUrl.contains("/v1/map/style.json") -> BundledMap.ATTRIBUTION
+        styleUrl.contains("openfreemap") -> "© OpenStreetMap contributors · OpenFreeMap"
+        else -> "© OpenStreetMap contributors"
+    }
+
+    override suspend fun prepare() { bundled?.prepare() }
 
     override suspend fun searchPlaces(query: String, near: LatLng?): List<Place> = geocoder.search(query, near)
     override suspend fun describe(position: LatLng): String? = geocoder.reverse(position)
@@ -117,7 +126,7 @@ class MapLibreMapProvider(
                         holder.map = map
                         map.uiSettings.isAttributionEnabled = true
                         map.uiSettings.isLogoEnabled = false
-                        holder.loadStyle(map, styleUrlFor(content.darkTheme), if (content.darkTheme) "dark" else "light") { holder.apply(content) }
+                        holder.loadStyle(map, styleFor(content.darkTheme), if (content.darkTheme) "dark" else "light") { holder.apply(content) }
                         map.addOnMapClickListener { p -> onTap?.invoke(LatLng(p.latitude, p.longitude)); onTap != null }
                         map.addOnCameraIdleListener { val c = map.cameraPosition.target; if (c != null) onCameraIdle?.invoke(LatLng(c.latitude, c.longitude)) }
                     }
@@ -128,22 +137,33 @@ class MapLibreMapProvider(
                 val wanted = if (content.darkTheme) "dark" else "light"
                 val m = holder.map
                 if (m != null && holder.theme != wanted && holder.theme != "") {
-                    holder.loadStyle(m, styleUrlFor(content.darkTheme), wanted) { holder.apply(content) }
+                    holder.loadStyle(m, styleFor(content.darkTheme), wanted) { holder.apply(content) }
                 } else holder.apply(content)
             },
         )
     }
 
-    private fun styleUrlFor(dark: Boolean): String =
-        if (styleUrl.contains("/v1/map/style.json")) styleUrl.substringBefore('?') + "?theme=" + (if (dark) "dark" else "light") else styleUrl
+    private fun styleFor(dark: Boolean): Style.Builder {
+        if (bundled != null) {
+            // Null only if unpacking failed (e.g. disk full): a plain background keeps routes and points usable.
+            val json = bundled.styleJson(dark) ?: """{"version":8,"sources":{},"layers":[{"id":"bg","type":"background","paint":{"background-color":"${if (dark) "#1f2421" else "#eef0ec"}"}}]}"""
+            return Style.Builder().fromJson(json)
+        }
+        val url = when {
+            styleUrl.contains("/v1/map/style.json") -> styleUrl.substringBefore('?') + "?theme=" + (if (dark) "dark" else "light")
+            dark && darkStyleUrl.isNotBlank() -> darkStyleUrl
+            else -> styleUrl
+        }
+        return Style.Builder().fromUri(url)
+    }
 
     /** Keeps the MapLibre objects outside composition and pushes [MapContent] into the sources. */
     private class Holder {
         /** Loads a style and recreates the Piyo sources/layers on top of it. */
-        fun loadStyle(map: MapLibreMap, url: String, themeName: String, onReady: (Style) -> Unit) {
+        fun loadStyle(map: MapLibreMap, builder: Style.Builder, themeName: String, onReady: (Style) -> Unit) {
             theme = themeName
             style = null
-            map.setStyle(Style.Builder().fromUri(url)) { st ->
+            map.setStyle(builder) { st ->
                 style = st
                 st.addSource(GeoJsonSource(SRC_LINES))
                 st.addSource(GeoJsonSource(SRC_POINTS))

@@ -38,8 +38,12 @@ data class MapLine(
  */
 class MapDrag(val onStart: (LatLng, Double) -> Boolean, val onMove: (LatLng) -> Unit, val onEnd: (LatLng) -> Unit)
 
-/** Camera: a center/zoom, or when [fit] has at least two points, the view that frames them (padding left to the provider). */
-data class MapCamera(val center: LatLng, val zoom: Double, val fit: List<LatLng>? = null)
+/**
+ * Camera: a center/zoom, or when [fit] has at least two points, the view that frames them (padding left to the
+ * provider). The map moves whenever the camera value changes; [seq] makes a repeated request ("centrar" again
+ * after the user panned) a new value: buttons pass `seq = camera.seq + 1`.
+ */
+data class MapCamera(val center: LatLng, val zoom: Double, val fit: List<LatLng>? = null, val seq: Int = 0)
 
 data class MapContent(
     val camera: MapCamera,
@@ -55,6 +59,9 @@ data class MapContent(
  */
 interface MapProvider {
     val attribution: String
+
+    /** One-time local setup before the first map is shown (e.g. unpacking bundled tiles). Never throws. */
+    suspend fun prepare() {}
 
     /** Text search biased to Santa Cruz de la Sierra. Returns an empty list on error (never throws). */
     suspend fun searchPlaces(query: String, near: LatLng?): List<Place>

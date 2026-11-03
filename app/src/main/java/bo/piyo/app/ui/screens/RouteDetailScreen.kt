@@ -86,6 +86,7 @@ import bo.piyo.app.ui.components.IconCircleButton
 import bo.piyo.app.ui.components.LineChip
 import bo.piyo.app.ui.components.SegmentStrip
 import bo.piyo.app.ui.theme.LocalPiyo
+import bo.piyo.app.ui.util.rememberCenterOnMe
 import bo.piyo.app.ui.util.arrivalTime
 import kotlinx.coroutines.launch
 
@@ -124,6 +125,8 @@ fun RouteDetailScreen(itineraryId: String, onBack: () -> Unit, onHome: () -> Uni
     val guidance = remember(active, position, maxLeg) { val p = position; if (active && p != null) TripGuide.guide(itin, p, maxLeg) else null }
     LaunchedEffect(guidance?.legIndex) { guidance?.let { if (it.legIndex > maxLeg) maxLeg = it.legIndex } }
     LaunchedEffect(active, position, follow) { val p = position; if (active && follow && p != null) camera = MapCamera(p, 16.0) }
+
+    val centerOnMe = rememberCenterOnMe { p -> follow = true; camera = MapCamera(p, 15.5, seq = camera.seq + 1) }
 
     fun startTrip() {
         session.activeTrip = itin
@@ -211,14 +214,14 @@ fun RouteDetailScreen(itineraryId: String, onBack: () -> Unit, onHome: () -> Uni
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         IconCircleButton(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back), onBack, filled = true)
                         if (!active) StartButton(onClick = ::onStart)
-                        else FilledTonalButton(onClick = { follow = true; position?.let { camera = MapCamera(it, 16.0) } }) {
+                        else FilledTonalButton(onClick = { follow = true; position?.let { camera = MapCamera(it, 16.0, seq = camera.seq + 1) } }) {
                             Icon(Icons.Rounded.Navigation, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp))
                             Text(stringResource(R.string.trip_in_progress, elapsedMinutes(session.tripStartedAt)))
                         }
                     }
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IconCircleButton(Icons.Rounded.MyLocation, stringResource(R.string.center_on_me), onClick = { follow = true; c.location.refresh(); position?.let { camera = MapCamera(it, 15.5) } }, filled = true)
-                        IconCircleButton(Icons.Rounded.CenterFocusStrong, stringResource(R.string.fit_route), onClick = { follow = false; camera = MapCamera(centerOf(itin), 13.5, fit = routePoints) }, filled = true)
+                        IconCircleButton(Icons.Rounded.MyLocation, stringResource(R.string.center_on_me), onClick = centerOnMe, filled = true)
+                        IconCircleButton(Icons.Rounded.CenterFocusStrong, stringResource(R.string.fit_route), onClick = { follow = false; camera = MapCamera(centerOf(itin), 13.5, fit = routePoints, seq = camera.seq + 1) }, filled = true)
                     }
                 }
             }

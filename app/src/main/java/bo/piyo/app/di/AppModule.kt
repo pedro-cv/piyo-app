@@ -13,18 +13,20 @@ import bo.piyo.app.data.lines.AssetLinesRepository
 import bo.piyo.app.data.lines.EffectiveLinesRepository
 import bo.piyo.app.data.location.AndroidLocationProvider
 import bo.piyo.app.data.providers.ProvidersRepository
+import bo.piyo.app.data.push.FirebaseConfig
+import bo.piyo.app.data.push.PushManager
 import bo.piyo.app.data.settings.SettingsRepository
 import bo.piyo.app.data.trips.TripHistoryRepository
-import bo.piyo.app.map.SantaCruz
 import bo.piyo.app.map.maplibre.MapLibreMapProvider
 import bo.piyo.app.map.maplibre.PhotonGeocoder
 
 /**
  * The one dependency graph of the app, for every environment. Lines come from the bundled seed plus
  * releases fetched from BuildConfig.API_BASE_URL (keys.properties → PIYO_API_BASE_URL); reports, NPS
- * and the manifest go to the same API. The map is MapLibre rendering the style served by that API
- * (/v1/map/style.json, tiles/glyphs/sprites from deploy/: Martin + Caddy); MAP_STYLE_URL may override
- * it (e.g. OpenFreeMap). Text search uses Photon (OpenStreetMap, key-free); see MAP_HOSTING.md.
+ * and the manifest go to the same API. The map is MapLibre rendering the city map bundled in the APK
+ * (assets/map: Protomaps tiles + light/dark styles, offline); MAP_STYLE_URL may override it with the
+ * API's own style (<api>/v1/map/style.json, Docker stack) or a hosted one (e.g. OpenFreeMap), and
+ * MAP_STYLE_DARK_URL gives a hosted override a dark twin. Text search uses Photon (OpenStreetMap, key-free); see MAP_HOSTING.md.
  */
 object AppModule {
     fun create(app: Application): AppContainer {
@@ -35,7 +37,7 @@ object AppModule {
         val api = PiyoApi(BuildConfig.API_BASE_URL, { settings.installId() }, BuildConfig.VERSION_NAME)
         val dataVersion: suspend () -> Int = { lines.load().dataVersion }
         val deviceClass = "android-${Build.VERSION.SDK_INT}"
-        val styleBase = BuildConfig.MAP_STYLE_URL.ifBlank { BuildConfig.API_BASE_URL.trimEnd('/') + "/v1/map/style.json" }
+        val styleBase = BuildConfig.MAP_STYLE_URL // blank = bundled offline map
         return object : AppContainer {
             override val appVersion = BuildConfig.VERSION_NAME
             override val settings = settings
@@ -45,11 +47,14 @@ object AppModule {
             override val contributions = HttpContributionsRepository(api, BuildConfig.VERSION_NAME)
             override val favorites = FavoritesRepository(app)
             override val trips = TripHistoryRepository(app)
-            override val location = AndroidLocationProvider(app, SantaCruz.center)
-            override val mapProvider = MapLibreMapProvider(app, styleBase, PhotonGeocoder(BuildConfig.GEOCODER_URL, BuildConfig.VERSION_NAME))
+            override val location = AndroidLocationProvider(app)
+            override val mapProvider = MapLibreMapProvider(app, styleBase, BuildConfig.MAP_STYLE_DARK_URL, PhotonGeocoder(BuildConfig.GEOCODER_URL, BuildConfig.VERSION_NAME))
             override val reports = HttpReportsRepository(api, settings, BuildConfig.VERSION_NAME, dataVersion)
             override val nps = HttpNpsRepository(api, settings, BuildConfig.VERSION_NAME, dataVersion, deviceClass)
             override val manifest = HttpManifestRepository(api)
+            override val push = PushManager(app, api, settings, FirebaseConfig(
+                BuildConfig.FIREBASE_APP_ID, BuildConfig.FIREBASE_API_KEY, BuildConfig.FIREBASE_PROJECT_ID, BuildConfig.FIREBASE_SENDER_ID,
+            ))
         }
     }
 }

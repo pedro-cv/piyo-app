@@ -60,6 +60,7 @@ import bo.piyo.app.ui.components.Note
 import bo.piyo.app.ui.components.PiyoButton
 import bo.piyo.app.ui.components.Tab
 import bo.piyo.app.ui.theme.LocalPiyo
+import bo.piyo.app.ui.util.rememberCenterOnMe
 import bo.piyo.app.ui.util.nearestOnLine
 import kotlinx.coroutines.launch
 
@@ -90,6 +91,7 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
     val pts = variant?.points ?: emptyList()
     // Frame the whole variant when it changes; "center on me" switches to the user.
     var camera by remember(variant) { mutableStateOf(MapCamera(pts.getOrElse(pts.size / 2) { bo.piyo.app.map.SantaCruz.center }, 13.0, fit = pts)) }
+    val centerOnMe = rememberCenterOnMe { p -> camera = MapCamera(p, 14.5, seq = camera.seq + 1) }
     val starred = line.lineId in favorites.lineIds
     val scaffoldState = rememberBottomSheetScaffoldState()
 
@@ -189,7 +191,7 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
                 c.mapProvider.Map(Modifier.fillMaxSize(), content, onTap = null, onCameraIdle = null, drag = null)
                 Row(Modifier.statusBarsPadding().padding(14.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     IconCircleButton(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back), onBack, filled = true)
-                    IconCircleButton(Icons.Rounded.MyLocation, stringResource(R.string.center_on_me), onClick = { position?.let { camera = MapCamera(it, 14.5) } }, filled = true)
+                    IconCircleButton(Icons.Rounded.MyLocation, stringResource(R.string.center_on_me), onClick = centerOnMe, filled = true)
                 }
             }
         }

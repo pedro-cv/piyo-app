@@ -8,6 +8,7 @@ import bo.piyo.app.data.feedback.ReportsRepository
 import bo.piyo.app.data.lines.LinesRepository
 import bo.piyo.app.data.location.LocationProvider
 import bo.piyo.app.data.providers.ProvidersRepository
+import bo.piyo.app.data.push.PushManager
 import bo.piyo.app.data.settings.SettingsRepository
 import bo.piyo.app.data.trips.TripHistoryRepository
 import bo.piyo.app.map.MapProvider
@@ -32,4 +33,6 @@ interface AppContainer {
     val manifest: ManifestRepository
     val location: LocationProvider
     val mapProvider: MapProvider
+    /** FCM registration; inert when the Firebase keys are blank. */
+    val push: PushManager
 }

@@ -1,0 +1,4 @@
+Map data: © OpenStreetMap contributors, ODbL 1.0 (https://www.openstreetmap.org/copyright).
+Tiles schema and styles: Protomaps basemaps (https://github.com/protomaps/basemaps).
+Fonts: Noto Sans, SIL Open Font License 1.1 (fonts/OFL.txt).
+Sprites: protomaps/basemaps-assets (https://github.com/protomaps/basemaps-assets).

@@ -165,7 +165,7 @@ data class FavoritePlace(
     val id: String,
     val label: String,
     val icon: String = "place",
-    val color: String = "#0E7C5F",
+    val color: String = "#2A6A47",
     val place: Place? = null,
 ) {
     val fixed: Boolean get() = id == HOME || id == WORK

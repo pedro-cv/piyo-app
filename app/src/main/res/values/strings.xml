@@ -13,7 +13,6 @@
 
     <!-- Generic -->
     <string name="back">Volver</string>
-    <string name="menu">Menú</string>
     <string name="close">Cerrar</string>
     <string name="min">min</string>
     <string name="fare_prefix">Bs</string>
@@ -89,7 +88,7 @@
     <string name="action_steps">Ver pasos</string>
     <string name="action_share">Compartir</string>
     <string name="fit_route">Ver toda la ruta</string>
-    <string name="share_text">Piyo · %1$s → %2$s · %3$d min · línea %4$s · Bs %5$s</string>
+    <string name="share_text">piyo · %1$s → %2$s · %3$d min · línea %4$s · Bs %5$s</string>
     <string name="trip_in_progress">En viaje · %1$d min</string>
     <string name="guide_walk_to">Caminá %1$s hasta %2$s</string>
     <string name="guide_then_board">Ahí subí al %1$s</string>
@@ -101,7 +100,7 @@
     <string name="arrived_body">Terminá el viaje para guardarlo en tus viajes.</string>
     <string name="keep_going">Seguir</string>
     <string name="location_needed_title">Sin ubicación no te podemos guiar</string>
-    <string name="location_needed_body">Activá el permiso de ubicación de Piyo en Ajustes del teléfono para seguir el viaje en el mapa.</string>
+    <string name="location_needed_body">Activá el permiso de ubicación de piyo en Ajustes del teléfono para seguir el viaje en el mapa.</string>
 
     <!-- Trip history -->
     <string name="trips_title">Tus viajes</string>
@@ -178,23 +177,14 @@
     <string name="remove">Quitar</string>
 
     <!-- Data & connection -->
-    <string name="data_title">Datos y conexión</string>
     <string name="data_lines">Líneas de micro</string>
     <string name="data_lines_count">Líneas</string>
-    <string name="data_size">Tamaño</string>
     <string name="data_updated">Actualizado</string>
-    <string name="data_city_map">Mapa de la ciudad</string>
-    <string name="data_coverage">Cobertura</string>
-    <string name="data_metro">área metropolitana</string>
     <string name="data_refresh">Se actualiza</string>
     <string name="data_refresh_value">1–2 veces al año</string>
     <string name="check_update">Buscar actualización</string>
-    <string name="check_update_note">Revisamos si hay una versión nueva (≈ 1 KB). La descarga completa pesa menos que una foto.</string>
-    <string name="check_update_offline">Sin conexión. Al conectarte podés buscar una versión nueva (≈ 1 KB); la descarga completa pesa menos que una foto.</string>
-    <string name="data_map_offline">Sin conexión</string>
-    <string name="data_map_offline_value">zonas ya vistas (caché)</string>
-    <string name="data_search">Buscar direcciones</string>
-    <string name="data_search_value">necesita internet</string>
+    <string name="check_update_note">Revisar usa ≈ 1 KB de datos.</string>
+    <string name="check_update_offline">Sin conexión. Conectate para buscar una versión nueva.</string>
     <string name="fares_title">Pasaje en micro</string>
     <string name="fare_adult">Adultos</string>
     <string name="fare_adult_value">Bs 3,50</string>
@@ -211,14 +201,12 @@
     <string name="dark_follows_system">Sigue al sistema</string>
     <string name="dark_on">Activado</string>
     <string name="dark_off">Desactivado</string>
-    <string name="notifications">Avisarme cuando se apliquen mis reportes y aportes</string>
-    <string name="notifications_on">Activado</string>
-    <string name="notifications_off">Desactivado</string>
-    <string name="notifications_denied">El teléfono tiene los avisos de Piyo bloqueados. Activalos en Ajustes o dejá el aviso apagado.</string>
-    <string name="open_settings">Abrir ajustes</string>
+    <string name="notifications_title">Notificaciones</string>
+    <string name="notifications_on">Revisión de tus aportes y datos nuevos</string>
+    <string name="notifications_off">Desactivadas</string>
     <string name="data_provider_in_use">Datos en uso</string>
     <string name="about">Acerca de · licencias</string>
-    <string name="give_feedback">Opinar sobre Piyo</string>
+    <string name="give_feedback">Opinar sobre piyo</string>
     <string name="days_ago">hace %1$d días</string>
     <string name="update_available">Hay una versión nueva: v%1$d</string>
     <string name="up_to_date">Tenés la última versión</string>
@@ -253,7 +241,7 @@
 
     <!-- NPS -->
     <string name="arrived">Llegaste</string>
-    <string name="nps_question">Llegaste. ¿Qué tan probable es que recomiendes Piyo a alguien?</string>
+    <string name="nps_question">Llegaste. ¿Qué tan probable es que recomiendes piyo a alguien?</string>
     <string name="nps_sub">Una sola pregunta, anónima. Aparece como mucho una vez cada 3 meses.</string>
     <string name="nps_low">Nada probable</string>
     <string name="nps_high">Muy probable</string>
@@ -275,7 +263,7 @@
     <string name="send_without_comment">Enviar sin comentar</string>
     <string name="send">Enviar</string>
     <string name="nps_thanks">Gracias. Se envía cuando haya red.</string>
-    <string name="open_source_note">Piyo es de código abierto. Si querés proponer una mejora o ver qué se está arreglando:</string>
+    <string name="open_source_note">piyo es de código abierto. Si querés proponer una mejora o ver qué se está arreglando:</string>
     <string name="propose_improvement">Proponer una mejora</string>
     <string name="opens_github">Se abre en GitHub · podés escribir en español</string>
     <string name="total_fare">%1$d min en total · Bs %2$s</string>
@@ -290,24 +278,33 @@
     <string name="offline_map">Mapa de la ciudad</string>
     <string name="offline_map_sub">Se carga al usarlo; las zonas que ya viste quedan guardadas y se ven sin conexión.</string>
     <string name="later">Más tarde</string>
-    <string name="start_using">Empezar a usar Piyo</string>
+    <string name="start_using">Empezar a usar piyo</string>
     <string name="first_load_note">Sin cuenta. Sin permisos de contactos ni fotos. Datos abiertos con crédito a sus fuentes.</string>
 
     <!-- Thanks -->
     <string name="thanks_title">Gracias por ser parte</string>
-    <string name="thanks_lead">Tu reporte, junto con los de otros vecinos, ya está en los datos de tu teléfono. Así se mantiene Piyo: entre todos.</string>
+    <string name="thanks_lead">Tu reporte, junto con los de otros vecinos, ya está en los datos de tu teléfono. Así se mantiene piyo: entre todos.</string>
     <string name="updated_to_version">Actualizadas a la versión %1$d</string>
     <string name="includes">Incluye</string>
     <string name="includes_value">tu reporte y otros de la comunidad</string>
     <string name="see_lines">Ver las líneas</string>
     <string name="back_home">Volver al inicio</string>
     <string name="notif_channel">Actualizaciones de datos</string>
-    <string name="notif_title">Piyo se actualizó con tu reporte</string>
+    <string name="notif_title">piyo se actualizó con tu reporte</string>
     <string name="notif_text">Y con los de otros vecinos. Gracias por ser parte.</string>
+    <string name="notif_channel_reviews">Revisión de tus reportes y aportes</string>
+    <string name="notif_dataset_title">Hay datos nuevos de las líneas</string>
+    <string name="notif_dataset_text">Abrí piyo y tocá Buscar actualización en Datos.</string>
+    <string name="notif_contribution_accepted_title">Aceptamos tu aporte</string>
+    <string name="notif_contribution_accepted_text">Gracias. Tu recorrido va a estar en la próxima actualización de datos.</string>
+    <string name="notif_contribution_rejected_title">Revisamos tu aporte</string>
+    <string name="notif_contribution_rejected_text">Esta vez no lo pudimos usar. Abrí Datos para ver el motivo.</string>
+    <string name="notif_report_accepted_title">Aceptamos tu reporte</string>
+    <string name="notif_report_accepted_text">Gracias. La corrección va a estar en la próxima actualización de datos.</string>
 
     <!-- Contribute (Aportar) -->
     <string name="contribute_title">Datos</string>
-    <string name="contribute_intro">Actualizá los datos oficiales, elegí cuáles usa Piyo y agregá o corregí recorridos de micros, trufis y otros transportes. Lo que dibujás se guarda en tu teléfono como un proveedor de datos propio; vos elegís si usarlo y qué enviar a revisión.</string>
+    <string name="contribute_intro">Elegí qué datos usa piyo y mejorá los recorridos.</string>
     <string name="swap_directions">Invertir el sentido de los recorridos</string>
     <string name="swap_directions_sub">Cada recorrido se recorre al revés: el final pasa a ser el inicio y todos los puntos se invierten</string>
     <string name="swap_done">Recorridos invertidos en la línea %1$s. Revisá origen y destino.</string>
@@ -316,9 +313,9 @@
     <string name="provider_meta">%1$d rutas · %2$s</string>
     <string name="provider_meta_one">1 ruta · %1$s</string>
     <string name="provider_meta_empty">Sin rutas todavía</string>
-    <string name="provider_import">Importar archivo</string>
+    <string name="provider_import">Importar rutas desde un archivo</string>
     <string name="provider_imported">Proveedor "%1$s" importado con %2$d rutas</string>
-    <string name="provider_import_failed">No es un archivo de proveedor de Piyo válido.</string>
+    <string name="provider_import_failed">No es un archivo de proveedor de piyo válido.</string>
     <string name="provider_delete_title">¿Eliminar "%1$s"?</string>
     <string name="provider_delete_body">Se borran de este teléfono las rutas de este proveedor (%1$d). Volvés a los datos oficiales. Si querés conservarlas, exportalas antes.</string>
     <string name="provider_rename_title">Nombre del proveedor</string>
@@ -349,7 +346,7 @@
     <string name="contrib_failed">No se pudo enviar. Probá de nuevo con red.</string>
     <string name="contrib_invalid">El servidor rechazó el aporte: %1$s</string>
     <string name="contrib_comment_hint">Comentario para quien revisa (opcional)</string>
-    <string name="contribute_note">Los aportes son anónimos. El límite mensual existe para que cada ruta se pueda verificar con calma. Las rutas de tu proveedor siguen en tu teléfono aunque no las envíes.</string>
+    <string name="contribute_note">Tus rutas quedan en tu teléfono. Enviarlas es opcional y anónimo.</string>
     <string name="editor_title_new">Nueva ruta</string>
     <string name="editor_title_edit">Corregir %1$s</string>
     <string name="tool_add">Agregar</string>
@@ -358,7 +355,7 @@
     <string name="color_hue">Tono</string>
     <string name="color_saturation">Saturación</string>
     <string name="color_lightness">Claridad</string>
-    <string name="color_custom_note">Piyo suaviza los colores muy claros o muy chillones para que el número se lea en blanco.</string>
+    <string name="color_custom_note">piyo suaviza los colores muy claros o muy chillones para que el número se lea en blanco.</string>
     <string name="use_color">Usar este color</string>
     <string name="tool_insert">Insertar</string>
     <string name="tool_delete">Borrar punto</string>
@@ -389,4 +386,14 @@
     <string name="local_badge_added">nueva</string>
     <string name="local_badge_updated">editada</string>
     <string name="using_provider">Usando "%1$s"</string>
+    <!-- Ajustes (gear on every tab) -->
+    <string name="settings">Ajustes</string>
+    <string name="settings_preferences">Preferencias</string>
+    <string name="settings_info">Información</string>
+    <string name="settings_help">Ayuda</string>
+    <string name="settings_offline_note">El mapa, las líneas y los viajes funcionan sin internet. Buscar direcciones y enviar aportes lo necesitan.</string>
+    <string name="location_title">Ubicación</string>
+    <string name="location_on">Permitida. Tocá para cambiarla en el teléfono.</string>
+    <string name="location_off">Sin permiso. Tocá para activarla.</string>
+    <string name="more_options">Más opciones</string>
 </resources>

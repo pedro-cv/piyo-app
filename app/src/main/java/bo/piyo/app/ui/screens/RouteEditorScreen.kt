@@ -82,7 +82,7 @@ import kotlin.math.roundToInt
 private enum class Tool { ADD, MOVE, INSERT, DELETE }
 
 /** Colours offered for a new route: already inside the toned range LineColors uses. */
-private val ROUTE_COLORS = listOf("#C2452D", "#D07B16", "#8A8A2A", "#2E8B57", "#0E7C5F", "#2B8A8A", "#2F6FB6", "#4C4CB3", "#7A4FB8", "#B8325E", "#8B5A2B", "#5C636A")
+private val ROUTE_COLORS = listOf("#C2452D", "#D07B16", "#8A8A2A", "#2E8B57", "#2A6A47", "#2B8A8A", "#2F6FB6", "#4C4CB3", "#7A4FB8", "#B8325E", "#8B5A2B", "#5C636A")
 
 /**
  * Route editor (CONTRIBUTIONS_DESIGN.md §4.2): full-screen map where taps add, move, insert or delete
