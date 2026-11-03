@@ -20,7 +20,7 @@ fun AboutScreen(onBack: () -> Unit) {
     val c = LocalContainer.current
     Page(title = stringResource(R.string.about), onBack = onBack) {
         PiyoCard {
-            Text("Piyo ${c.appVersion}", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = t.ink)
+            Text("piyo ${c.appVersion}", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = t.ink)
             Text("Micros y trufis de Santa Cruz. Gratis, sin anuncios, sin internet. Código abierto.", color = t.muted, fontSize = 14.sp)
         }
         PiyoCard {

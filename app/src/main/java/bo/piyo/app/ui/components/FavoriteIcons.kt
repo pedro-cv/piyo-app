@@ -37,7 +37,7 @@ object FavoriteIcons {
     fun icon(key: String): ImageVector = all.firstOrNull { it.key == key }?.icon ?: Icons.Rounded.Place
 
     /** Eight toned colours that read well under white glyphs in both themes. */
-    val palette = listOf("#0E7C5F", "#2F6FB6", "#7A4FB8", "#C2452D", "#D07B16", "#B8325E", "#2B8A8A", "#5C636A")
+    val palette = listOf("#2A6A47", "#2F6FB6", "#7A4FB8", "#C2452D", "#D07B16", "#B8325E", "#2B8A8A", "#5C636A")
 
-    fun color(hex: String): Color = runCatching { Color(("FF" + hex.removePrefix("#")).toLong(16)) }.getOrDefault(Color(0xFF0E7C5F))
+    fun color(hex: String): Color = runCatching { Color(("FF" + hex.removePrefix("#")).toLong(16)) }.getOrDefault(Color(0xFF2A6A47))
 }

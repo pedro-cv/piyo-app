@@ -41,7 +41,7 @@ data class PiyoTokens(
 val LightTokens = PiyoTokens(
     bg = Color(0xFFF7F8F5), surface = Color(0xFFFFFFFF), surface2 = Color(0xFFEEF0EA),
     ink = Color(0xFF15191C), muted = Color(0xFF5C636A), line = Color(0xFFDCDFD7),
-    primary = Color(0xFF0E7C5F), onPrimary = Color(0xFFFFFFFF), primarySoft = Color(0xFFDDF3EA),
+    primary = Color(0xFF2A6A47), onPrimary = Color(0xFFFFFFFF), primarySoft = Color(0xFFDCEEE3),
     accent = Color(0xFFF2A33A), danger = Color(0xFFD63B3B),
     offline = Color(0xFFFFF2D1), offlineInk = Color(0xFF5A4300),
     mapBase = Color(0xFFE6EBE2), mapRoad = Color(0xFFFFFFFF), mapMajor = Color(0xFFF3DFA6),
@@ -52,7 +52,7 @@ val LightTokens = PiyoTokens(
 val DarkTokens = PiyoTokens(
     bg = Color(0xFF0E1012), surface = Color(0xFF181B1E), surface2 = Color(0xFF22262A),
     ink = Color(0xFFF2F3F1), muted = Color(0xFFA3A9AF), line = Color(0xFF2D3236),
-    primary = Color(0xFF2ED39B), onPrimary = Color(0xFF07261B), primarySoft = Color(0xFF153A2E),
+    primary = Color(0xFF5FBF8A), onPrimary = Color(0xFF07261B), primarySoft = Color(0xFF163B2A),
     accent = Color(0xFFF6B45A), danger = Color(0xFFFF6B6B),
     offline = Color(0xFF3B2F12), offlineInk = Color(0xFFFFE4A3),
     mapBase = Color(0xFF1B2024), mapRoad = Color(0xFF2B3237), mapMajor = Color(0xFF3C3A2A),
