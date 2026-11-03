@@ -32,8 +32,9 @@ import bo.piyo.app.ui.util.isOnline
 import kotlinx.coroutines.launch
 
 /**
- * The official line data card with "Buscar actualización": shared by the Datos tab (sync lives there) and
- * the Datos y conexión screen. [reload] re-reads the status after an install; [onStatus] publishes it.
+ * The official line data card with "Buscar actualización" (Datos tab): version, line count and age, nothing
+ * more. The data in use is the section below it. [reload] re-reads the status after an install; [onStatus]
+ * publishes it.
  */
 @Composable
 fun OfficialDataCard(status: DataStatus?, reload: suspend () -> DataStatus, onStatus: (DataStatus) -> Unit) {
@@ -55,9 +56,7 @@ fun OfficialDataCard(status: DataStatus?, reload: suspend () -> DataStatus, onSt
             Text("v${status?.dataVersion ?: "—"}", fontSize = 13.sp, color = t.muted)
         }
         Kv(stringResource(R.string.data_lines_count), status?.lineCount?.toString() ?: "—")
-        Kv(stringResource(R.string.data_size), status?.let { "${it.bytes / 1024} KB" } ?: "—")
         Kv(stringResource(R.string.data_updated), formatDateWithAge(status?.generatedAt))
-        status?.providerName?.let { Kv(stringResource(R.string.data_provider_in_use), it) }
     }
     PiyoButton(stringResource(R.string.check_update), primary = false, enabled = online && !checking, onClick = {
         scope.launch {

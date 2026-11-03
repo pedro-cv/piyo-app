@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +28,10 @@ import bo.piyo.app.ui.components.IconCircleButton
 import bo.piyo.app.ui.components.PiyoBottomBar
 import bo.piyo.app.ui.components.Tab
 import bo.piyo.app.ui.theme.LocalPiyo
+
+/** The gear at the top right of every tab (Buscar, Líneas, Favoritos, Datos): opens Ajustes. */
+@Composable
+fun SettingsAction(onClick: () -> Unit) = IconCircleButton(Icons.Rounded.Settings, stringResource(R.string.settings), onClick)
 
 /** Page frame: app bar, scrollable body with 18 dp gutters, optional tab bar. */
 @Composable

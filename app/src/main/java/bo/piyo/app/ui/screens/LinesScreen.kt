@@ -76,7 +76,7 @@ private data class LineRowModel(val line: Line, val color: Color, val route: Str
  * fling never has to compose dozens of fresh cards in one frame.
  */
 @Composable
-fun LinesScreen(onLine: (String) -> Unit, onTab: (Tab) -> Unit) {
+fun LinesScreen(onLine: (String) -> Unit, onTab: (Tab) -> Unit, onSettings: () -> Unit) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
     val bundle by c.lines.bundle.collectAsStateWithLifecycle()
@@ -111,7 +111,7 @@ fun LinesScreen(onLine: (String) -> Unit, onTab: (Tab) -> Unit) {
     val starIcon = rememberVectorPainter(Icons.Rounded.Star)
     val chevronIcon = rememberVectorPainter(Icons.Rounded.ChevronRight)
 
-    Page(title = stringResource(R.string.lines_title), scroll = false) {
+    Page(title = stringResource(R.string.lines_title), scroll = false, actions = { SettingsAction(onSettings) }) {
         // Search field with a clear button
         Row(
             Modifier.fillMaxWidth().height(48.dp).clip(RoundedCornerShape(14.dp)).background(t.surface).border(1.dp, t.line, RoundedCornerShape(14.dp)).padding(start = 14.dp, end = 4.dp),

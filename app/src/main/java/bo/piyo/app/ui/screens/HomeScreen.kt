@@ -21,7 +21,6 @@ import androidx.compose.material.icons.rounded.EditRoad
 import androidx.compose.material.icons.rounded.Place
 import androidx.compose.material.icons.rounded.Flag
 import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
@@ -32,6 +31,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import bo.piyo.app.ui.util.Notifier
+import bo.piyo.app.ui.util.rememberLocationPermission
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,7 +78,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     onSearch: () -> Unit, onResults: () -> Unit, onRoute: (String) -> Unit, onLine: (String) -> Unit,
-    onReportMissing: () -> Unit, onMenu: () -> Unit, onTab: (Tab) -> Unit, onPickOrigin: () -> Unit = {},
+    onReportMissing: () -> Unit, onSettings: () -> Unit, onTab: (Tab) -> Unit, onPickOrigin: () -> Unit = {},
 ) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
@@ -87,12 +92,32 @@ fun HomeScreen(
     val online = isOnline()
     val myLocationLabel = stringResource(R.string.my_location)
     val context = androidx.compose.ui.platform.LocalContext.current
-    LaunchedEffect(Unit) { c.lines.load(); c.location.refresh(); c.reports.flushQueue(); c.nps.flushQueue() }
+    val scope = rememberCoroutineScope()
+    // First visit to Inicio: the location prompt, then (Android 13+) the notification prompt, each shown by the
+    // app on its own only once. Later, location is asked again only from a "Centrar en mi ubicación" tap and
+    // both can be granted from Ajustes. Granting notifications turns the switch on and registers push.
+    val askNotif = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) scope.launch { c.settings.setNotifications(true); c.push.sync(force = true) }
+    }
+    fun askNotificationsOnce() = scope.launch {
+        if (Build.VERSION.SDK_INT >= 33 && !c.settings.notifPermissionAsked() && !Notifier.permitted(context)) {
+            c.settings.setNotifPermissionAsked()
+            askNotif.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+    val askLocation = rememberLocationPermission(onDenied = { askNotificationsOnce() }) { c.location.refresh(); askNotificationsOnce() }
+    LaunchedEffect(Unit) {
+        c.lines.load(); c.location.refresh(); c.reports.flushQueue(); c.nps.flushQueue(); c.push.sync()
+        if (!c.location.hasPermission() && !c.settings.locationPermissionAsked()) {
+            c.settings.setLocationPermissionAsked()
+            askLocation(false)
+        } else askNotificationsOnce()
+    }
 
     fun go(place: Place) {
         val b = bundle ?: return
         val from = session.originPlace
-        val origin = from?.position ?: position ?: return
+        val origin = from?.position ?: position ?: bo.piyo.app.map.SantaCruz.center
         val req = TripRequest(origin, from?.name ?: myLocationLabel, place.position, place.name)
         session.request = req
         session.destinationPlace = place
@@ -103,7 +128,7 @@ fun HomeScreen(
 
     Page(
         titleContent = { Text(stringResource(R.string.brand), style = BrandStyle, color = t.primary, modifier = Modifier.weight(1f).padding(start = 4.dp)) },
-        actions = { IconCircleButton(Icons.Rounded.MoreVert, stringResource(R.string.menu), onMenu) },
+        actions = { SettingsAction(onSettings) },
     ) {
         if (!online) OfflineBanner(stringResource(R.string.offline_banner, bundle?.dataVersion ?: 0, formatShortDate(bundle?.generatedAt)))
         bundle?.providerName?.let { pn ->

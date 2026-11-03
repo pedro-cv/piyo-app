@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable object ResultsRoute
 @Serializable data class RouteDetailRoute(val itineraryId: String)
 @Serializable data class LineDetailRoute(val lineId: String)
-@Serializable object DataRoute
+@Serializable object SettingsRoute
 @Serializable data class ReportRoute(val lineId: String? = null, val lat: Double? = null, val lng: Double? = null, val type: String? = null)
 @Serializable object ThanksRoute
 @Serializable object AboutRoute

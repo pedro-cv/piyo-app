@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TabsScreen(
     onSearch: () -> Unit, onResults: () -> Unit, onRoute: (String) -> Unit, onLine: (String) -> Unit,
-    onReportMissing: () -> Unit, onMenu: () -> Unit, onPickPlace: (String) -> Unit,
+    onReportMissing: () -> Unit, onSettings: () -> Unit, onPickPlace: (String) -> Unit,
     onEditRoute: (lineId: String?, variantId: String?) -> Unit,
 ) {
     val onPickOrigin = { onPickPlace("origin") }
@@ -54,10 +54,10 @@ fun TabsScreen(
             userScrollEnabled = false, beyondViewportPageCount = if (warm) 3 else 0,
         ) { page ->
             when (tabs[page]) {
-                Tab.SEARCH -> HomeScreen(onSearch, onResults, onRoute, onLine, onReportMissing, onMenu, onTab = { session.tab = it }, onPickOrigin = onPickOrigin)
-                Tab.LINES -> LinesScreen(onLine = onLine, onTab = { session.tab = it })
-                Tab.FAVORITES -> FavoritesScreen(onResults = onResults, onPickPlace = onPickPlace, onLine = onLine, onTab = { session.tab = it })
-                Tab.CONTRIBUTE -> ContributeScreen(onEditRoute = onEditRoute)
+                Tab.SEARCH -> HomeScreen(onSearch, onResults, onRoute, onLine, onReportMissing, onSettings, onTab = { session.tab = it }, onPickOrigin = onPickOrigin)
+                Tab.LINES -> LinesScreen(onLine = onLine, onTab = { session.tab = it }, onSettings = onSettings)
+                Tab.FAVORITES -> FavoritesScreen(onResults = onResults, onPickPlace = onPickPlace, onLine = onLine, onTab = { session.tab = it }, onSettings = onSettings)
+                Tab.CONTRIBUTE -> ContributeScreen(onEditRoute = onEditRoute, onSettings = onSettings)
             }
         }
         PiyoBottomBar(session.tab, onSelect = { session.tab = it })

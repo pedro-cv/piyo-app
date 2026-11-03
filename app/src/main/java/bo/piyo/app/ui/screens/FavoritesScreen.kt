@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 
 /** 05 Favoritos: saved places (icon + colour, add/edit/remove), favorite lines, trip history. Nothing leaves the phone. */
 @Composable
-fun FavoritesScreen(onResults: () -> Unit, onPickPlace: (String) -> Unit, onLine: (String) -> Unit, onTab: (Tab) -> Unit) {
+fun FavoritesScreen(onResults: () -> Unit, onPickPlace: (String) -> Unit, onLine: (String) -> Unit, onTab: (Tab) -> Unit, onSettings: () -> Unit) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
     val session = LocalSession.current
@@ -76,7 +76,7 @@ fun FavoritesScreen(onResults: () -> Unit, onPickPlace: (String) -> Unit, onLine
         onResults()
     }
 
-    Page(title = stringResource(R.string.favorites_title)) {
+    Page(title = stringResource(R.string.favorites_title), actions = { SettingsAction(onSettings) }) {
         SectionHeader(stringResource(R.string.places))
         GroupedList {
             favorites.places.forEach { f ->
