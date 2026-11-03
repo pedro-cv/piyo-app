@@ -35,6 +35,18 @@
                 <data android:scheme="piyo" android:host="gracias" />
             </intent-filter>
         </activity>
+        <!-- Push (PRIVACY.md §Push): no token until the user's notification switch is on; no analytics. -->
+        <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
+        <!-- Messages with a notification payload are drawn by the system: same icon, colour and channel as ours. -->
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_piyo" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/brand_green" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="piyo_reviews" />
+        <service android:name=".data.push.PiyoMessagingService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <!-- Shares exported local data providers (cache/exports) with other apps; nothing else is exposed. -->
         <provider
             android:name="androidx.core.content.FileProvider"
