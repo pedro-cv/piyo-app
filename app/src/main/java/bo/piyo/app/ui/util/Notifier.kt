@@ -54,6 +54,9 @@ object Notifier {
         if (accepted) post(ctx, CHANNEL_REVIEWS, R.string.notif_channel_reviews, ID_CONTRIBUTION, R.string.notif_contribution_accepted_title, R.string.notif_contribution_accepted_text)
         else post(ctx, CHANNEL_REVIEWS, R.string.notif_channel_reviews, ID_CONTRIBUTION, R.string.notif_contribution_rejected_title, R.string.notif_contribution_rejected_text)
 
+    fun contributionPublished(ctx: Context) =
+        post(ctx, CHANNEL_REVIEWS, R.string.notif_channel_reviews, ID_CONTRIBUTION, R.string.notif_contribution_published_title, R.string.notif_contribution_published_text)
+
     fun reportAccepted(ctx: Context) =
         post(ctx, CHANNEL_REVIEWS, R.string.notif_channel_reviews, ID_REPORT, R.string.notif_report_accepted_title, R.string.notif_report_accepted_text)
 

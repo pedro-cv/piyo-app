@@ -31,6 +31,8 @@ class PiyoMessagingService : FirebaseMessagingService() {
         when (data["type"]) {
             "contribution_accepted" -> Notifier.contributionReviewed(this, accepted = true)
             "contribution_rejected" -> Notifier.contributionReviewed(this, accepted = false)
+            // A release includes this phone's routes (one message per phone, however many routes).
+            "contribution_published" -> Notifier.contributionPublished(this)
             "report_accepted" -> Notifier.reportAccepted(this)
             "dataset" -> {
                 val version = data["version"]?.toIntOrNull() ?: return

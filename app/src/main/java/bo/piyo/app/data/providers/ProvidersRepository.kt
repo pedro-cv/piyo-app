@@ -135,17 +135,36 @@ class ProvidersRepository(private val context: Context) {
         refresh(providerId)
     }
 
-    /** Records that [lineIds] were sent in contribution [contributionId]. */
-    suspend fun markSent(providerId: String, lineIds: Collection<String>, contributionId: String) = withContext(Dispatchers.IO) {
+    /** Records that each line of [ids] (line id → server id of that route) was sent. */
+    suspend fun markSent(providerId: String, ids: Map<String, String>) = withContext(Dispatchers.IO) {
         val f = read(providerId) ?: return@withContext
         val now = nowIso()
-        val edits = f.edits.mapValues { (id, e) -> if (id in lineIds) e.copy(sent = SentInfo(contributionId, now)) else e }
+        val edits = f.edits.mapValues { (id, e) -> ids[id]?.let { e.copy(sent = SentInfo(it, now)) } ?: e }
         write(f.copy(edits = edits))
         refresh(providerId)
     }
 
-    /** Applies review results (contribution id → status, note) to every provider that sent them. */
-    suspend fun applyStatuses(statuses: Map<String, Pair<String, String>>) = withContext(Dispatchers.IO) {
+    /** Forgets that [lineId] was sent (after the server withdrew it): the route is back to "Sin enviar". */
+    suspend fun clearSent(providerId: String, lineId: String) = withContext(Dispatchers.IO) {
+        val f = read(providerId) ?: return@withContext
+        val e = f.edits[lineId] ?: return@withContext
+        write(f.copy(edits = f.edits + (lineId to e.copy(sent = null))))
+        refresh(providerId)
+    }
+
+    /**
+     * True when another route of any provider still points at server id [contributionId]. Only possible for
+     * routes sent before the server stored one row per route; withdrawing would also withdraw that route.
+     */
+    suspend fun sentIdShared(contributionId: String, exceptProvider: String, exceptLine: String): Boolean = withContext(Dispatchers.IO) {
+        list().any { m ->
+            val f = read(m.id) ?: return@any false
+            f.edits.any { (line, e) -> e.sent?.id == contributionId && !(m.id == exceptProvider && line == exceptLine) }
+        }
+    }
+
+    /** Applies review results (contribution id → status) to every provider that sent them. */
+    suspend fun applyStatuses(statuses: Map<String, ReviewState>) = withContext(Dispatchers.IO) {
         if (statuses.isEmpty()) return@withContext
         for (m in list()) {
             val f = read(m.id) ?: continue
@@ -153,11 +172,15 @@ class ProvidersRepository(private val context: Context) {
             val edits = f.edits.mapValues { (_, e) ->
                 val s = e.sent ?: return@mapValues e
                 val st = statuses[s.id] ?: return@mapValues e
-                if (st.first == s.status && st.second == s.note) e else { changed = true; e.copy(sent = s.copy(status = st.first, note = st.second)) }
+                if (st.status == s.status && st.note == s.note && st.publishedVersion == s.publishedVersion) e
+                else { changed = true; e.copy(sent = s.copy(status = st.status, note = st.note, publishedVersion = st.publishedVersion)) }
             }
             if (changed) { write(f.copy(edits = edits)); refresh(m.id) }
         }
     }
+
+    /** What the server says about one sent route. */
+    data class ReviewState(val status: String, val note: String, val publishedVersion: Int = 0)
 
     /** The provider file copied to the shareable cache folder (FileProvider path "exports/"). */
     suspend fun exportFile(id: String): File? = withContext(Dispatchers.IO) {

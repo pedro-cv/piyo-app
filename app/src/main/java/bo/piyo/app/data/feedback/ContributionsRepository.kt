@@ -6,6 +6,7 @@ import bo.piyo.app.domain.model.ContributionQuota
 import bo.piyo.app.domain.model.ContributionResult
 import bo.piyo.app.domain.model.ContributionStatus
 import bo.piyo.app.domain.model.LocalProvider
+import bo.piyo.app.domain.model.WithdrawResult
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -14,12 +15,17 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.io.IOException
 
-/** Route contributions (backend/README.md "contributions"): monthly quota, send selected routes, read review statuses. */
+/**
+ * Route contributions (backend/README.md "contributions"): monthly quota, send selected routes, read review
+ * statuses, withdraw a route that is still waiting for review. The server stores one row per route.
+ */
 interface ContributionsRepository {
     suspend fun quota(): ContributionQuota
     /** Sends only [lineIds] of [provider] (lines, variants, edits with the original geometry). */
     suspend fun send(provider: LocalProvider, lineIds: Collection<String>, comment: String): ContributionResult
     suspend fun mine(): List<ContributionStatus>
+    /** Withdraws the sent route [id] so it is not reviewed (only while it is pending). */
+    suspend fun withdraw(id: String): WithdrawResult
 }
 
 @Serializable
@@ -67,7 +73,17 @@ class HttpContributionsRepository(private val api: PiyoApi, private val appVersi
         val o = runCatching { json.parseToJsonElement(r.body).jsonObject }.getOrNull()
         val err = o?.get("error")?.jsonObject
         return when (r.code) {
-            201 -> ContributionResult.Sent(o?.get("id")?.jsonPrimitive?.content ?: "", o?.get("remaining")?.jsonPrimitive?.content?.toIntOrNull() ?: 0)
+            201 -> {
+                val first = o?.get("id")?.jsonPrimitive?.content ?: ""
+                // One id per route; a server that predates the split answers with a single id for all of them.
+                val ids = o?.get("contributions")?.jsonArray?.mapNotNull { e ->
+                    val c = e.jsonObject
+                    val route = c["route_id"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                    val id = c["id"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                    route to id
+                }?.toMap() ?: emptyMap()
+                ContributionResult.Sent(first, o?.get("remaining")?.jsonPrimitive?.content?.toIntOrNull() ?: 0, lines.associate { it.lineId to (ids[it.lineId] ?: first) })
+            }
             400, 413 -> ContributionResult.Invalid(err?.get("message")?.jsonPrimitive?.content ?: "HTTP ${r.code}")
             403 -> ContributionResult.Blocked(err?.get("blocked_until")?.jsonPrimitive?.content ?: "")
             429 -> ContributionResult.QuotaExceeded
@@ -85,7 +101,17 @@ class HttpContributionsRepository(private val api: PiyoApi, private val appVersi
                 id = o["id"]?.jsonPrimitive?.content ?: "", status = o["status"]?.jsonPrimitive?.content ?: "pending",
                 note = o["review_note"]?.jsonPrimitive?.content ?: "", routeIds = o["route_ids"]?.jsonArray?.map { it.jsonPrimitive.content } ?: emptyList(),
                 createdAtIso = o["created_at"]?.jsonPrimitive?.content ?: "",
+                publishedVersion = o["published_version"]?.jsonPrimitive?.content?.toIntOrNull() ?: 0,
             )
+        }
+    }
+
+    override suspend fun withdraw(id: String): WithdrawResult {
+        val r = try { api.delete("/v1/contributions/" + java.net.URLEncoder.encode(id, "UTF-8")) } catch (e: IOException) { return WithdrawResult.FAILED }
+        return when (r.code) {
+            204, 404 -> WithdrawResult.WITHDRAWN // 404: already gone (withdrawn before, or never stored)
+            409 -> WithdrawResult.REVIEWED
+            else -> WithdrawResult.FAILED
         }
     }
 }

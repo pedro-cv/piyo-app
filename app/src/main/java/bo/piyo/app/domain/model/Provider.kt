@@ -18,13 +18,18 @@ data class ProviderMeta(
     @SerialName("route_count") val routeCount: Int = 0,
 )
 
-/** Review state of a route after it was sent (mirrors the server statuses). */
+/**
+ * Review state of a route after it was sent (mirrors the server statuses). Each route has its own server id;
+ * files written before the backend stored one row per route may share an id between the routes of one send.
+ * [publishedVersion] is the official data release that includes the route (0 = not in any release yet).
+ */
 @Serializable
 data class SentInfo(
     val id: String,
     val at: String,
     val status: String = "pending",   // pending | accepted | rejected
     val note: String = "",
+    @SerialName("published_version") val publishedVersion: Int = 0,
 )
 
 /** What the provider knows about one of its routes. `before` keeps the original polylines of an update. */
@@ -50,11 +55,22 @@ data class LocalProvider(
 data class ContributionQuota(val limit: Int, val remaining: Int, val resetsAtIso: String?, val blockedUntilIso: String?, val maxRoutes: Int = 10)
 
 sealed class ContributionResult {
-    data class Sent(val id: String, val remaining: Int) : ContributionResult()
+    /** [ids]: line id → server id of that route (one row per route); [id] is the first, for messages. */
+    data class Sent(val id: String, val remaining: Int, val ids: Map<String, String> = emptyMap()) : ContributionResult()
     data class Blocked(val untilIso: String) : ContributionResult()
     data object QuotaExceeded : ContributionResult()
     data class Invalid(val message: String) : ContributionResult()
     data class Failed(val message: String) : ContributionResult()
 }
 
-data class ContributionStatus(val id: String, val status: String, val note: String, val routeIds: List<String>, val createdAtIso: String)
+data class ContributionStatus(val id: String, val status: String, val note: String, val routeIds: List<String>, val createdAtIso: String, val publishedVersion: Int = 0)
+
+/** Outcome of withdrawing a sent route (DELETE /v1/contributions/{id}). */
+enum class WithdrawResult {
+    /** Deleted on the server, or the server no longer has it: nothing is left to review. */
+    WITHDRAWN,
+    /** Already reviewed: the server keeps it (an accepted route may still be published). */
+    REVIEWED,
+    /** No connection or a server error: nothing changed. */
+    FAILED,
+}

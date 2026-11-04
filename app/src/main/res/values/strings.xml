@@ -175,6 +175,19 @@
     <string name="export">Exportar</string>
     <string name="edit">Editar</string>
     <string name="remove">Quitar</string>
+    <string name="remove_route">Quitar de mis rutas</string>
+    <string name="remove_title">¿Quitar «%1$s» de tus rutas?</string>
+    <string name="remove_body_added">La ruta se borra de este teléfono y deja de aparecer en piyo.</string>
+    <string name="remove_body_update">Tu corrección se borra de este teléfono. piyo vuelve a mostrar el recorrido de los datos oficiales.</string>
+    <string name="remove_body_pending">Ya la enviaste y está en revisión. Al quitarla también retiramos el envío, así nadie la revisa. Necesita internet.</string>
+    <string name="remove_body_accepted">Ya la aceptaron. Va a llegar en la próxima actualización de datos aunque la quites de acá.</string>
+    <string name="remove_body_published">Ya está en los datos oficiales (v%1$d). Quitarla de acá no cambia los datos oficiales.</string>
+    <string name="remove_confirm">Quitar</string>
+    <string name="remove_confirm_withdraw">Quitar y retirar envío</string>
+    <string name="remove_withdraw_failed">No pudimos retirar el envío. Probá de nuevo con internet. Tus rutas siguen en el teléfono.</string>
+    <string name="remove_done">Quitamos la línea %1$s de tus rutas.</string>
+    <string name="remove_done_withdrawn">Quitamos la línea %1$s y retiramos su envío.</string>
+    <string name="remove_done_reviewed">Quitamos la línea %1$s de tu teléfono. Ya estaba revisada, así que el envío queda registrado.</string>
 
     <!-- Data & connection -->
     <string name="data_lines">Líneas de micro</string>
@@ -299,6 +312,8 @@
     <string name="notif_contribution_accepted_text">Gracias. Tu recorrido va a estar en la próxima actualización de datos.</string>
     <string name="notif_contribution_rejected_title">Revisamos tu aporte</string>
     <string name="notif_contribution_rejected_text">Esta vez no lo pudimos usar. Abrí Datos para ver el motivo.</string>
+    <string name="notif_contribution_published_title">Tu recorrido ya está en piyo</string>
+    <string name="notif_contribution_published_text">Ya es parte de los datos oficiales. Abrí Datos y tocá Buscar actualización para verlo.</string>
     <string name="notif_report_accepted_title">Aceptamos tu reporte</string>
     <string name="notif_report_accepted_text">Gracias. La corrección va a estar en la próxima actualización de datos.</string>
 
@@ -318,6 +333,7 @@
     <string name="provider_import_failed">No es un archivo de proveedor de piyo válido.</string>
     <string name="provider_delete_title">¿Eliminar "%1$s"?</string>
     <string name="provider_delete_body">Se borran de este teléfono las rutas de este proveedor (%1$d). Volvés a los datos oficiales. Si querés conservarlas, exportalas antes.</string>
+    <string name="provider_delete_pending">Las rutas en revisión (%1$d) también se retiran del servidor. Necesita internet.</string>
     <string name="provider_rename_title">Nombre del proveedor</string>
     <string name="provider_name_hint">Ej.: Trufis del Plan 3000</string>
     <string name="provider_new_title">Guardar en un proveedor nuevo</string>
@@ -328,7 +344,8 @@
     <string name="route_updated">Actualizada</string>
     <string name="route_unsent">Sin enviar</string>
     <string name="route_sent">Enviada · en revisión</string>
-    <string name="route_accepted">Aceptada</string>
+    <string name="route_accepted">Aceptada · llega en la próxima actualización</string>
+    <string name="route_published">En los datos oficiales · v%1$d</string>
     <string name="route_rejected">Rechazada</string>
     <string name="add_or_fix">Agregar o corregir</string>
     <string name="add_route">Agregar ruta nueva</string>
@@ -337,10 +354,11 @@
     <string name="pick_variant_title">¿Qué sentido?</string>
     <string name="send_contributions">Enviar aportes (%1$d)</string>
     <string name="send_contributions_title">Enviar a revisión</string>
-    <string name="send_contributions_body">Se envían solo las rutas que marques, con la versión de datos en la que te basaste. Un revisor las compara con los datos oficiales antes de publicarlas.</string>
+    <string name="send_contributions_body">Se envían solo las rutas que marques, con la versión de datos en la que te basaste. Cada ruta se revisa por separado y se compara con los datos oficiales antes de publicarla.</string>
     <string name="contrib_quota_left">Te quedan %1$d de %2$d envíos este mes</string>
     <string name="contrib_quota_reset">Se renueva el %1$s</string>
     <string name="contrib_sent">Aporte #%1$s enviado. Te avisamos cuando se revise.</string>
+    <string name="contrib_sent_many">Enviamos %1$d rutas. Cada una se revisa por separado y te avisamos de cada una.</string>
     <string name="contrib_blocked">Podés enviar aportes de nuevo el %1$s</string>
     <string name="contrib_quota_exceeded">Ya usaste tus envíos de este mes.</string>
     <string name="contrib_failed">No se pudo enviar. Probá de nuevo con red.</string>
