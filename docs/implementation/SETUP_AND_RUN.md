@@ -54,6 +54,16 @@ Command line alternative, from `piyo\app`:
 adb shell am start -n bo.piyo.app/bo.piyo.app.MainActivity
 ```
 
+**Safe development build when `keys.properties` holds production values.** `-PkeysFile=none` (or the
+environment variable `PIYO_KEYS_FILE=none`) makes Gradle read no keys file at all: every key falls back to
+its local default (API `http://10.0.2.2:8080`, bundled map, push off). `-PkeysFile=keys.dev.properties`
+reads another git-ignored file instead. Use it for every test, build and install against a local backend:
+
+```powershell
+.\gradlew.bat -PkeysFile=none :app:testDebugUnitTest :app:installDebug
+cd ..\backend; $env:DEV_MODE="true"; go run ./cmd/piyo-api   # memory store, demo admin token dev-admin-token
+```
+
 What you should see: the splash (≤ 1.5 s), the first-load screen ("62 líneas incluidas · versión 13", "Empezar a usar Piyo"), then Inicio with the "Pasan cerca" chips around C. Florida 461, and the search. Type "ventura" → pick Ventura Mall → Resultados shows three itineraries (51→45 39 min, 58→45 39 min, 60→45 41 min; cross-checked in EVIDENCE.md §4) → tap one → Ruta with the drawn map → **Empezar** → **Terminar viaje** → the NPS sheet appears (in dev it always appears, so you can test it).
 
 ## 2c. Fast iteration loop (hot reload)
