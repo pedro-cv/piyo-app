@@ -127,7 +127,6 @@
     <string name="branch_main">Principal</string>
     <string name="ride_branch">Ramal %1$s · hacia %2$s</string>
     <string name="favorite_line">Línea favorita</string>
-    <string name="report_error">Reportar error</string>
     <string name="line_subtitle">%1$s · pasa a %2$s de vos por %3$s</string>
     <string name="mode_micro">Micro</string>
     <string name="mode_trufi">Trufi</string>
@@ -229,12 +228,10 @@
     <string name="report_title">Reportar</string>
     <string name="whats_wrong">¿Qué está mal?</string>
     <string name="type_stop">Parada incorrecta</string>
-    <string name="type_route">Recorrido incorrecto</string>
     <string name="type_gone">Ya no pasa por acá</string>
     <string name="type_missing">Falta una línea o trufi</string>
     <string name="type_other">Otra cosa</string>
     <string name="map_title_stop">¿Dónde está la parada equivocada?</string>
-    <string name="map_title_route">¿Por dónde pasa en realidad?</string>
     <string name="map_title_gone">¿Desde dónde ya no pasa?</string>
     <string name="map_title_missing">¿Por dónde pasa la línea que falta?</string>
     <string name="map_title_other">Marcá el lugar</string>
@@ -248,9 +245,14 @@
     <string name="report_queued">Reporte guardado. Se envía cuando haya red.</string>
     <string name="report_blocked">Podés reportar de nuevo el %1$s</string>
     <string name="report_quota_exceeded">Ya enviaste 3 reportes hoy. Mañana podés seguir.</string>
-    <string name="report_contribute_title">¿Conocés bien el recorrido? Corregilo vos</string>
-    <string name="report_contribute_body">Dibujá la ruta en el mapa y enviala para revisión. Lleva unos minutos. Tu aporte se revisa junto con los datos de líneas del proveedor que tengas seleccionado, así los revisores tienen en cuenta los cambios que ya hubo en los datos oficiales.</string>
-    <string name="report_contribute_cta">Ir a Datos</string>
+    <string name="report_contribute_title">¿El recorrido está mal? Corregilo vos</string>
+    <string name="report_contribute_body">Dibujá en el mapa por dónde pasa en realidad y envialo a revisión. Así se corrigen los recorridos de piyo.</string>
+    <string name="report_contribute_cta">Corregir el recorrido</string>
+    <string name="report_missing_title">¿Conocés la línea que falta? Agregala vos</string>
+    <string name="report_missing_body">Dibujá su recorrido en el mapa y envialo a revisión.</string>
+    <string name="report_missing_cta">Agregar la ruta</string>
+    <string name="fix_this_route">Corregir recorrido</string>
+    <string name="report_other_problem">Reportar otro problema</string>
 
     <!-- NPS -->
     <string name="arrived">Llegaste</string>

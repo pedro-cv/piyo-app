@@ -118,8 +118,13 @@ data class Place(
     val position: LatLng,
 )
 
+/**
+ * What a report is about. A wrong route is not a report any more: it is corrected in the route editor and sent
+ * as a contribution (CONTRIBUTIONS_DESIGN.md), which carries the geometry a reviewer needs. The backend still
+ * accepts "route" from older app versions.
+ */
 enum class ReportType(val wire: String) {
-    STOP("stop"), ROUTE("route"), GONE("gone"), MISSING("missing"), OTHER("other")
+    STOP("stop"), GONE("gone"), MISSING("missing"), OTHER("other")
 }
 
 data class ReportDraft(

@@ -75,6 +75,7 @@ fun PiyoNavHost(startRoute: Any) {
             LineDetailScreen(
                 lineId = r.lineId, onBack = { nav.popBackStack() },
                 onReport = { lat, lng -> nav.navigate(ReportRoute(lineId = r.lineId, lat = lat, lng = lng)) },
+                onEditRoute = { variantId -> nav.navigate(RouteEditorRoute(r.lineId, variantId)) },
                 onTab = { nav.tab(session, it) },
             )
         }
@@ -82,7 +83,11 @@ fun PiyoNavHost(startRoute: Any) {
         composable<AboutRoute> { AboutScreen(onBack = { nav.popBackStack() }) }
         composable<ReportRoute> { entry ->
             val r = entry.toRoute<ReportRoute>()
-            ReportScreen(lineId = r.lineId, lat = r.lat, lng = r.lng, initialType = r.type, onBack = { nav.popBackStack() }, onContribute = { nav.tab(session, Tab.CONTRIBUTE) })
+            ReportScreen(
+                lineId = r.lineId, lat = r.lat, lng = r.lng, initialType = r.type, onBack = { nav.popBackStack() },
+                // The editor replaces the report: going back from it returns to where the report started.
+                onEditRoute = { lineId, variantId -> nav.navigate(RouteEditorRoute(lineId, variantId)) { popUpTo<ReportRoute> { inclusive = true } } },
+            )
         }
         composable<RouteEditorRoute> { entry ->
             val r = entry.toRoute<RouteEditorRoute>()
