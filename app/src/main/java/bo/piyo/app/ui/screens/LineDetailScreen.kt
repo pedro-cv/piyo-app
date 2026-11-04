@@ -78,6 +78,7 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
     val bundle by c.lines.bundle.collectAsStateWithLifecycle()
     val favorites by c.favorites.favorites.collectAsStateWithLifecycle(initialValue = Favorites())
     val position by c.location.position.collectAsStateWithLifecycle()
+    val accuracy by c.location.accuracyM.collectAsStateWithLifecycle()
     val line = bundle?.lines?.firstOrNull { it.lineId == lineId }
     if (line == null) { Box(Modifier.fillMaxSize().background(t.bg)); return }
     // A line may have several named routes ("41 Rojo", "41 Verde"); each has Ida/Vuelta.
@@ -96,13 +97,13 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     // Map content: the polyline (drawn with direction arrows by the provider), its two endpoints, the user.
-    val content = remember(variant, camera, position, t.dark) {
+    val content = remember(variant, camera, position, accuracy, t.dark) {
         val points = mutableListOf<MapPoint>()
         if (pts.size >= 2) {
             points += MapPoint("start", pts.first(), color, MapPoint.Kind.START)
             points += MapPoint("end", pts.last(), color, MapPoint.Kind.END)
         }
-        position?.let { points += MapPoint("user", it, Color(0xFF2F7BF6), MapPoint.Kind.USER) }
+        position?.let { points += MapPoint("user", it, Color(0xFF2F7BF6), MapPoint.Kind.USER, accuracyM = accuracy) }
         val lines = mutableListOf(MapLine("line", pts, color))
         if (near != null && position != null) lines += MapLine("tonear", listOf(position!!, near.first), t.accent, dashed = true)
         MapContent(camera, lines, points, t.dark)

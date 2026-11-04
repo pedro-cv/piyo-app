@@ -13,6 +13,8 @@ data class MapPoint(
     val color: Color,
     val kind: Kind = Kind.STOP,
     val label: String? = null,
+    /** USER only: accuracy radius in metres, drawn as a translucent halo so an imprecise fix looks imprecise. */
+    val accuracyM: Float? = null,
 ) {
     /**
      * ORIGIN = where you board (bus glyph in the line colour), TRANSFER = where you change (smaller bus),

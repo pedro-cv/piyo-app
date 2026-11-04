@@ -192,7 +192,18 @@ class MapLibreMapProvider(
                     PropertyFactory.iconPitchAlignment(Property.ICON_PITCH_ALIGNMENT_MAP),
                     PropertyFactory.iconAllowOverlap(true), PropertyFactory.iconIgnorePlacement(true),
                 ))
-                val plain = Expression.not(Expression.has("icon"))
+                // Accuracy halo under the user dot: the radius is metres converted to pixels for the current
+                // zoom. Metres per pixel halve with every zoom level, so an exponential(2) interpolation between
+                // the pixel radius at zoom 0 and at zoom 22 (precomputed per feature) is exact at every zoom.
+                val halo = Expression.has("halo0")
+                st.addLayer(CircleLayer(L_HALO, SRC_POINTS).withFilter(halo).withProperties(
+                    PropertyFactory.circleColor("#2F7BF6"), PropertyFactory.circleOpacity(0.14f),
+                    PropertyFactory.circleStrokeColor("#2F7BF6"), PropertyFactory.circleStrokeOpacity(0.35f), PropertyFactory.circleStrokeWidth(1f),
+                    PropertyFactory.circleRadius(Expression.interpolate(Expression.exponential(2f), Expression.zoom(),
+                        Expression.stop(0, Expression.get("halo0")), Expression.stop(22, Expression.get("halo22")))),
+                    PropertyFactory.circlePitchAlignment(Property.CIRCLE_PITCH_ALIGNMENT_MAP),
+                ))
+                val plain = Expression.all(Expression.not(Expression.has("icon")), Expression.not(halo))
                 st.addLayer(CircleLayer(L_POINTS, SRC_POINTS).withFilter(plain).withProperties(
                     PropertyFactory.circleColor(Expression.get("fill")),
                     PropertyFactory.circleStrokeColor(Expression.get("stroke")),
@@ -307,7 +318,17 @@ class MapLibreMapProvider(
                 }
             }
             s.getSourceAs<GeoJsonSource>(SRC_LINES)?.setGeoJson(FeatureCollection.fromFeatures(lines))
-            val pts = content.points.map { p ->
+            // Halos first so they sit under every dot (same source, separate features).
+            val halos = content.points.mapNotNull { p ->
+                val acc = p.accuracyM?.takeIf { p.kind == MapPoint.Kind.USER && it > 0f } ?: return@mapNotNull null
+                // MapLibre's world is 512 px wide at zoom 0.
+                val mppAtZoom0 = 40_075_016.686 * kotlin.math.cos(Math.toRadians(p.position.lat)) / 512.0
+                Feature.fromGeometry(Point.fromLngLat(p.position.lng, p.position.lat)).apply {
+                    addNumberProperty("halo0", acc / mppAtZoom0)
+                    addNumberProperty("halo22", acc / (mppAtZoom0 / (1 shl 22)))
+                }
+            }
+            val pts = halos + content.points.map { p ->
                 Feature.fromGeometry(Point.fromLngLat(p.position.lng, p.position.lat)).apply {
                     val col = hex(p.color.toArgb())
                     when (p.kind) {
@@ -347,6 +368,7 @@ class MapLibreMapProvider(
         const val L_WALKS = "piyo-walks-layer"
         const val L_ARROWS = "piyo-arrows-layer"
         const val L_POINTS = "piyo-points-layer"
+        const val L_HALO = "piyo-accuracy-layer"
         const val L_MARKERS = "piyo-markers-layer"
         const val IMG_ARROW = "piyo-arrow"
     }

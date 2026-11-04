@@ -51,6 +51,14 @@ class MainActivity : ComponentActivity() {
                 else -> FirstLoadRoute
             }
         }
+        // Live location updates only while piyo is on screen (PRIVACY.md §1), also during a trip.
+        lifecycle.addObserver(androidx.lifecycle.LifecycleEventObserver { _, event ->
+            when (event) {
+                androidx.lifecycle.Lifecycle.Event.ON_START -> container.location.onAppVisible(true)
+                androidx.lifecycle.Lifecycle.Event.ON_STOP -> container.location.onAppVisible(false)
+                else -> Unit
+            }
+        })
         setContent {
             val darkOverride by container.settings.darkOverride.collectAsStateWithLifecycle(initialValue = "system")
             val session = remember { TripSession() }

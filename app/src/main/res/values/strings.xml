@@ -395,5 +395,17 @@
     <string name="location_title">Ubicación</string>
     <string name="location_on">Permitida. Tocá para cambiarla en el teléfono.</string>
     <string name="location_off">Sin permiso. Tocá para activarla.</string>
+    <string name="location_approx">Aproximada: el punto en el mapa puede quedar lejos. Tocá para usar la precisa.</string>
+    <string name="location_info_row">¿Para qué usa piyo tu ubicación?</string>
+    <string name="location_why_title">Tu ubicación, solo para usar piyo</string>
+    <string name="location_why_map">Te mostramos en el mapa y la usamos como punto de partida de tus viajes.</string>
+    <string name="location_why_lines">Te decimos qué líneas pasan cerca y te guiamos durante el viaje.</string>
+    <string name="location_why_foreground">Solo mientras usás piyo. No te seguimos en segundo plano ni te rastreamos.</string>
+    <string name="location_why_stays">No la mandamos a nuestro servidor. Solo sale del teléfono si enviás un reporte con ese punto.</string>
+    <string name="location_why_search">Al buscar una dirección, el buscador recibe una zona aproximada de 1 km para mostrar lugares cercanos.</string>
+    <string name="location_why_trips">Los viajes que terminás se guardan solo en tu teléfono, con su origen y destino. Los podés quitar cuando quieras.</string>
+    <string name="location_why_precise">Si elegís «Aproximada», el punto en el mapa puede quedar a cientos de metros de donde estás.</string>
+    <string name="location_why_allow">Permitir ubicación</string>
+    <string name="location_why_later">Ahora no</string>
     <string name="more_options">Más opciones</string>
 </resources>
