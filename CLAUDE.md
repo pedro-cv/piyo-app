@@ -35,6 +35,7 @@ Resources: `res/values/strings.xml` (all copy, Spanish voseo), `values-night` (d
 ```sh
 ./gradlew :app:testDebugUnitTest          # JVM tests (parser on the real seed, planner, provider merge)
 ./gradlew :app:installDebug               # build + install; config from keys.properties (see .example)
+./gradlew -PkeysFile=none :app:installDebug   # ignores keys.properties (local defaults, push off): tests/dev
 ./gradlew :app:assembleRelease            # minified; signed with the debug key until a real keystore exists
 adb shell am start -n bo.piyo.app/.MainActivity
 adb exec-out screencap -p > shot.png      # evidence for PRs
