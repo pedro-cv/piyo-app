@@ -15,7 +15,7 @@ okhttp = "4.12.0"
 maplibre = "11.8.0"
 googleFonts = "1.7.6"
 junit = "4.13.2"
-firebaseBom = "33.7.0"
+firebaseBom = "35.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
