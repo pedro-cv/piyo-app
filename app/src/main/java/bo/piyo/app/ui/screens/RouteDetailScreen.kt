@@ -1,9 +1,6 @@
 package bo.piyo.app.ui.screens
 
-import android.Manifest
 import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -134,13 +131,9 @@ fun RouteDetailScreen(itineraryId: String, onBack: () -> Unit, onHome: () -> Uni
         maxLeg = 0; arrivalShown = false; follow = true
         c.location.startTracking()
     }
-    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
-        if (granted.values.any { it }) startTrip() else permissionDenied = true
-    }
-    fun onStart() {
-        if (c.location.hasPermission()) startTrip()
-        else permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
-    }
+    // Same explained flow as everywhere else (rememberLocationPermission): what location is for, then the system dialog.
+    val askLocation = bo.piyo.app.ui.util.rememberLocationPermission(onDenied = { permissionDenied = true }) { startTrip() }
+    fun onStart() = askLocation(true)
     fun finishTrip(arrived: Boolean) {
         val now = System.currentTimeMillis()
         val started = session.tripStartedAt.takeIf { it > 0 } ?: now
@@ -170,8 +163,9 @@ fun RouteDetailScreen(itineraryId: String, onBack: () -> Unit, onHome: () -> Uni
         context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_TEXT, text) }, null))
     }
 
-    val content = remember(itin, camera, t.dark, position, active) {
-        mapContentFor(itin, camera, t.dark, if (active) position else null) { line, variant -> LineColors.colorOf(line, variant) }
+    val accuracy by c.location.accuracyM.collectAsStateWithLifecycle()
+    val content = remember(itin, camera, t.dark, position, accuracy, active) {
+        mapContentFor(itin, camera, t.dark, if (active) position else null, accuracy) { line, variant -> LineColors.colorOf(line, variant) }
     }
 
     Box(Modifier.fillMaxSize().background(t.bg)) {
@@ -341,7 +335,7 @@ internal fun centerOf(it: Itinerary): LatLng {
  * Points: where you board each ride, where you get off the last one, and the user ([userPos], live while
  * the trip is active; otherwise the planned origin). No intermediate "stop" dots: micros stop on request.
  */
-internal fun mapContentFor(it: Itinerary, camera: MapCamera, dark: Boolean, userPos: LatLng?, colorOf: (Line, Variant?) -> Color): MapContent {
+internal fun mapContentFor(it: Itinerary, camera: MapCamera, dark: Boolean, userPos: LatLng?, userAccuracyM: Float? = null, colorOf: (Line, Variant?) -> Color): MapContent {
     val lines = mutableListOf<MapLine>()
     val points = mutableListOf<MapPoint>()
     val ink = if (dark) Color(0xFFF2F3F1) else Color(0xFF15191C)
@@ -356,7 +350,7 @@ internal fun mapContentFor(it: Itinerary, camera: MapCamera, dark: Boolean, user
             }
         }
     }
-    points += MapPoint("user", userPos ?: it.legs.first().from, Color(0xFF2F7BF6), MapPoint.Kind.USER)
+    points += MapPoint("user", userPos ?: it.legs.first().from, Color(0xFF2F7BF6), MapPoint.Kind.USER, accuracyM = if (userPos != null) userAccuracyM else null)
     points += MapPoint("dest", it.legs.last().to, accent, MapPoint.Kind.DESTINATION)
     return MapContent(camera, lines, points, dark)
 }

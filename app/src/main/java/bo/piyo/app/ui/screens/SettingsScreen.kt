@@ -59,13 +59,17 @@ fun SettingsScreen(onBack: () -> Unit, onAbout: () -> Unit) {
     // Permissions can change in the phone settings while piyo is in the background: re-read them on resume.
     var notifPermitted by remember { mutableStateOf(Notifier.permitted(ctx)) }
     var locationOn by remember { mutableStateOf(c.location.hasPermission()) }
+    var locationPrecise by remember { mutableStateOf(c.location.hasPrecisePermission()) }
+    var locationInfo by remember { mutableStateOf(false) }
     var notifDenied by remember { mutableStateOf(false) }
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { notifPermitted = Notifier.permitted(ctx); locationOn = c.location.hasPermission() }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { notifPermitted = Notifier.permitted(ctx); locationOn = c.location.hasPermission(); locationPrecise = c.location.hasPrecisePermission() }
     val askNotif = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { granted ->
         notifPermitted = granted
         if (granted) scope.launch { c.settings.setNotifications(true); c.push.sync() } else notifDenied = true
     }
-    val askLocation = rememberLocationPermission { locationOn = true; c.location.refresh() }
+    val askLocation = rememberLocationPermission(upgradeToPrecise = true) {
+        locationOn = c.location.hasPermission(); locationPrecise = c.location.hasPrecisePermission(); c.location.refresh()
+    }
     val switchColors = SwitchDefaults.colors(checkedTrackColor = t.primary, checkedThumbColor = t.onPrimary)
 
     Page(title = stringResource(R.string.settings), onBack = onBack) {
@@ -91,11 +95,17 @@ fun SettingsScreen(onBack: () -> Unit, onAbout: () -> Unit) {
                 Text(stringResource(if (notifOn) R.string.notifications_on else R.string.notifications_off), color = t.muted, fontSize = 13.sp)
             }
             ListRow(
-                onClick = { if (locationOn) ctx.startActivity(appSettingsIntent(ctx)) else askLocation(true) },
+                onClick = { if (locationOn && locationPrecise) ctx.startActivity(appSettingsIntent(ctx)) else askLocation(true) },
                 leading = { LeadingIcon(Icons.Rounded.LocationOn, t.muted, t.surface2) },
             ) {
                 Text(stringResource(R.string.location_title), color = t.ink, fontSize = 16.sp)
-                Text(stringResource(if (locationOn) R.string.location_on else R.string.location_off), color = if (locationOn) t.muted else t.primary, fontSize = 13.sp)
+                Text(
+                    stringResource(when { !locationOn -> R.string.location_off; !locationPrecise -> R.string.location_approx; else -> R.string.location_on }),
+                    color = if (locationOn && locationPrecise) t.muted else t.primary, fontSize = 13.sp,
+                )
+            }
+            ListRow(onClick = { locationInfo = true }, leading = { LeadingIcon(Icons.Rounded.Info, t.muted, t.surface2) }) {
+                Text(stringResource(R.string.location_info_row), color = t.ink, fontSize = 16.sp)
             }
             ListRow(
                 leading = { LeadingIcon(Icons.Rounded.DarkMode, t.muted, t.surface2) },
@@ -132,6 +142,7 @@ fun SettingsScreen(onBack: () -> Unit, onAbout: () -> Unit) {
         Note("piyo ${c.appVersion}")
     }
     if (showNps) NpsSheet(trip = null, onClose = { showNps = false })
+    if (locationInfo) bo.piyo.app.ui.util.LocationInfoDialog(onAllow = null, onLater = { locationInfo = false })
     if (showFares) AlertDialog(
         onDismissRequest = { showFares = false },
         title = { Text(stringResource(R.string.fares_title)) },

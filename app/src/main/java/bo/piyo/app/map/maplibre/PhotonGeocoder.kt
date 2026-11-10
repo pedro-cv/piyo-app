@@ -29,11 +29,14 @@ class PhotonGeocoder(private val baseUrl: String, appVersion: String) {
     suspend fun search(query: String, near: LatLng?): List<Place> = withContext(Dispatchers.IO) {
         val q = query.trim()
         if (q.length < 2) return@withContext emptyList()
+        // The bias only ranks nearby results first: two decimals (~1 km) is enough, and the search service never
+        // sees the user's exact position (PRIVACY.md §1).
+        val bias = coarse(near ?: SantaCruz.center)
         val url = baseUrl.toHttpUrlOrNull()?.newBuilder()
             ?.addQueryParameter("q", q)
             ?.addQueryParameter("limit", "8")
-            ?.addQueryParameter("lat", (near ?: SantaCruz.center).lat.toString())
-            ?.addQueryParameter("lon", (near ?: SantaCruz.center).lng.toString())
+            ?.addQueryParameter("lat", bias.lat.toString())
+            ?.addQueryParameter("lon", bias.lng.toString())
             ?.addQueryParameter("bbox", "${SantaCruz.boundsMin.lng},${SantaCruz.boundsMin.lat},${SantaCruz.boundsMax.lng},${SantaCruz.boundsMax.lat}")
             ?.build() ?: return@withContext emptyList()
         val req = Request.Builder().url(url).header("User-Agent", userAgent).build()
@@ -58,6 +61,15 @@ class PhotonGeocoder(private val baseUrl: String, appVersion: String) {
     }
 
     private fun parse(body: String): List<Place> {
+        return parseFeatures(body)
+    }
+
+    companion object {
+        /** Rounds to two decimals (about 1.1 km of latitude), the precision sent as the search bias. */
+        fun coarse(p: LatLng) = LatLng(Math.round(p.lat * 100) / 100.0, Math.round(p.lng * 100) / 100.0)
+    }
+
+    private fun parseFeatures(body: String): List<Place> {
         val root = json.parseToJsonElement(body).jsonObject
         return root["features"]?.jsonArray.orEmpty().mapNotNull { f ->
             val o = f.jsonObject

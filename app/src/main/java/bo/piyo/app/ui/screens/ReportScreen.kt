@@ -58,10 +58,14 @@ import bo.piyo.app.ui.theme.LocalPiyo
 import bo.piyo.app.ui.util.formatDayMonth
 import kotlinx.coroutines.launch
 
-/** 07 Reportar línea: type chips, map with a movable pin, optional comment, quota, anonymous send. */
+/**
+ * 07 Reportar línea: type chips, map with a movable pin, optional comment, quota, anonymous send. A wrong or
+ * missing route is not reported here: the card on top opens the route editor, so the correction arrives as a
+ * contribution with the actual geometry ([onEditRoute] with the line and variant, or nulls for a new route).
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ReportScreen(lineId: String?, lat: Double?, lng: Double?, initialType: String?, onBack: () -> Unit, onContribute: () -> Unit = {}) {
+fun ReportScreen(lineId: String?, lat: Double?, lng: Double?, initialType: String?, onBack: () -> Unit, onEditRoute: (lineId: String?, variantId: String?) -> Unit) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
     val scope = rememberCoroutineScope()
@@ -77,7 +81,7 @@ fun ReportScreen(lineId: String?, lat: Double?, lng: Double?, initialType: Strin
     LaunchedEffect(Unit) { quota = c.reports.quota() }
 
     val mapTitle = stringResource(when (type) {
-        ReportType.STOP -> R.string.map_title_stop; ReportType.ROUTE -> R.string.map_title_route; ReportType.GONE -> R.string.map_title_gone
+        ReportType.STOP -> R.string.map_title_stop; ReportType.GONE -> R.string.map_title_gone
         ReportType.MISSING -> R.string.map_title_missing; ReportType.OTHER -> R.string.map_title_other
     })
     val content = remember(pin, line, t.dark) {
@@ -93,18 +97,20 @@ fun ReportScreen(lineId: String?, lat: Double?, lng: Double?, initialType: Strin
             if (line != null) LineChip(line)
         }
     }) {
-        SectionHeader(stringResource(R.string.whats_wrong))
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf(ReportType.STOP to R.string.type_stop, ReportType.ROUTE to R.string.type_route, ReportType.GONE to R.string.type_gone, ReportType.MISSING to R.string.type_missing, ReportType.OTHER to R.string.type_other)
-                .forEach { (ty, label) -> PillButton(stringResource(label), selected = type == ty, onClick = { type = ty }) }
-        }
-        if (type == ReportType.ROUTE || type == ReportType.MISSING || type == ReportType.GONE) PiyoCard(onClick = onContribute) {
+        // Route problems go to the editor: correct this line, or draw the one that is missing.
+        val fixLine = line != null && type != ReportType.MISSING
+        PiyoCard(onClick = { if (fixLine) onEditRoute(line?.lineId, line?.variants?.firstOrNull()?.variantId) else onEditRoute(null, null) }) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Rounded.EditRoad, null, tint = t.primary, modifier = Modifier.size(22.dp))
-                Text(stringResource(R.string.report_contribute_title), color = t.ink, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+                Text(stringResource(if (fixLine) R.string.report_contribute_title else R.string.report_missing_title), color = t.ink, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             }
-            Text(stringResource(R.string.report_contribute_body), color = t.muted, fontSize = 13.sp, lineHeight = 18.sp)
-            Text(stringResource(R.string.report_contribute_cta), color = t.primary, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Text(stringResource(if (fixLine) R.string.report_contribute_body else R.string.report_missing_body), color = t.muted, fontSize = 13.sp, lineHeight = 18.sp)
+            Text(stringResource(if (fixLine) R.string.report_contribute_cta else R.string.report_missing_cta), color = t.primary, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        }
+        SectionHeader(stringResource(R.string.whats_wrong))
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(ReportType.STOP to R.string.type_stop, ReportType.GONE to R.string.type_gone, ReportType.MISSING to R.string.type_missing, ReportType.OTHER to R.string.type_other)
+                .forEach { (ty, label) -> PillButton(stringResource(label), selected = type == ty, onClick = { type = ty }) }
         }
         SectionHeader(mapTitle)
         Box(Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(14.dp))) {

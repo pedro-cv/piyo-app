@@ -9,9 +9,15 @@ plugins {
 
 // Optional local config (never committed): app/keys.properties, see app/keys.properties.example.
 // Without the file the app talks to http://10.0.2.2:8080 (the emulator's route to localhost).
+// -PkeysFile=<path> reads another file instead (e.g. keys.dev.properties); -PkeysFile=none reads no file at
+// all, so a build or test run on a machine whose keys.properties holds production values cannot pick them
+// up: every key falls back to its local default (emulator API, bundled map, push off).
+val keysFile = (findProperty("keysFile") as String?) ?: System.getenv("PIYO_KEYS_FILE") ?: "keys.properties"
 val keys = Properties().apply {
-    val f = rootProject.file("keys.properties")
-    if (f.exists()) f.inputStream().use { load(it) }
+    if (keysFile != "none") {
+        val f = rootProject.file(keysFile)
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
 }
 // A Gradle property wins over the file (CI, or a one-off build: ./gradlew assembleRelease -PMAP_STYLE_URL=).
 fun key(name: String, default: String): String = (findProperty(name) as String?) ?: keys.getProperty(name) ?: default

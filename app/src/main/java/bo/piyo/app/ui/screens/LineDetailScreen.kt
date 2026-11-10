@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.EditRoad
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,13 +72,14 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Double) -> Unit, onTab: (Tab) -> Unit) {
+fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Double) -> Unit, onEditRoute: (variantId: String?) -> Unit, onTab: (Tab) -> Unit) {
     val t = LocalPiyo.current
     val c = LocalContainer.current
     val scope = rememberCoroutineScope()
     val bundle by c.lines.bundle.collectAsStateWithLifecycle()
     val favorites by c.favorites.favorites.collectAsStateWithLifecycle(initialValue = Favorites())
     val position by c.location.position.collectAsStateWithLifecycle()
+    val accuracy by c.location.accuracyM.collectAsStateWithLifecycle()
     val line = bundle?.lines?.firstOrNull { it.lineId == lineId }
     if (line == null) { Box(Modifier.fillMaxSize().background(t.bg)); return }
     // A line may have several named routes ("41 Rojo", "41 Verde"); each has Ida/Vuelta.
@@ -96,13 +98,13 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     // Map content: the polyline (drawn with direction arrows by the provider), its two endpoints, the user.
-    val content = remember(variant, camera, position, t.dark) {
+    val content = remember(variant, camera, position, accuracy, t.dark) {
         val points = mutableListOf<MapPoint>()
         if (pts.size >= 2) {
             points += MapPoint("start", pts.first(), color, MapPoint.Kind.START)
             points += MapPoint("end", pts.last(), color, MapPoint.Kind.END)
         }
-        position?.let { points += MapPoint("user", it, Color(0xFF2F7BF6), MapPoint.Kind.USER) }
+        position?.let { points += MapPoint("user", it, Color(0xFF2F7BF6), MapPoint.Kind.USER, accuracyM = accuracy) }
         val lines = mutableListOf(MapLine("line", pts, color))
         if (near != null && position != null) lines += MapLine("tonear", listOf(position!!, near.first), t.accent, dashed = true)
         MapContent(camera, lines, points, t.dark)
@@ -181,7 +183,11 @@ fun LineDetailScreen(lineId: String, onBack: () -> Unit, onReport: (Double, Doub
                     }
                 }
                 HorizontalDivider(color = t.line, modifier = Modifier.padding(vertical = 10.dp))
-                PiyoButton(stringResource(R.string.report_error), primary = false, icon = Icons.Rounded.Flag, onClick = { val p = near?.first ?: pts.firstOrNull() ?: bo.piyo.app.map.SantaCruz.center; onReport(p.lat, p.lng) })
+                // A wrong route is corrected in the editor (sent as a contribution); other problems are a report.
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    PiyoButton(stringResource(R.string.fix_this_route), primary = false, icon = Icons.Rounded.EditRoad, modifier = Modifier.weight(1f), onClick = { onEditRoute(variant?.variantId) })
+                    PiyoButton(stringResource(R.string.report_other_problem), primary = false, icon = Icons.Rounded.Flag, modifier = Modifier.weight(1f), onClick = { val p = near?.first ?: pts.firstOrNull() ?: bo.piyo.app.map.SantaCruz.center; onReport(p.lat, p.lng) })
+                }
                 Note(bundle?.attribution?.takeIf { it.isNotBlank() } ?: stringResource(R.string.osm_credit), modifier = Modifier.fillMaxWidth().padding(top = 8.dp), align = androidx.compose.ui.text.style.TextAlign.Center)
                 }
             },

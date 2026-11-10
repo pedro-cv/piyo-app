@@ -72,6 +72,8 @@ import bo.piyo.app.domain.model.LocalProvider
 import bo.piyo.app.domain.model.ProviderMeta
 import bo.piyo.app.domain.model.RouteEdit
 import bo.piyo.app.domain.model.Variant
+import bo.piyo.app.domain.model.WithdrawResult
+import bo.piyo.app.data.providers.ProvidersRepository
 import bo.piyo.app.ui.LocalContainer
 import bo.piyo.app.ui.components.GroupedList
 import bo.piyo.app.ui.components.IconCircleButton
@@ -112,15 +114,20 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit,
     var routeMenu by remember { mutableStateOf<String?>(null) }
     var status by remember { mutableStateOf<DataStatus?>(null) }
     var swapping by remember { mutableStateOf<Line?>(null) }
+    var removing by remember { mutableStateOf<Line?>(null) }
+    var busy by remember { mutableStateOf(false) }
     val importFailed = stringResource(R.string.provider_import_failed)
 
-    LaunchedEffect(Unit) {
-        status = c.officialLines.status()
+    // Pull review results for anything this phone sent: on open, when the app comes back (e.g. from a review
+    // notification) and when an update installs new official data (a route may now be published in it).
+    var refreshes by remember { mutableStateOf(0) }
+    androidx.lifecycle.compose.LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_RESUME) { refreshes++ }
+    LaunchedEffect(refreshes, status?.dataVersion) {
         val b = c.officialLines.load()
         official = Triple(b.dataVersion, b.lines.size, b.attribution.ifBlank { b.source })
-        // Pull review results for anything this phone sent.
+        if (status == null) status = c.officialLines.status()
         val mine = c.contributions.mine()
-        c.providers.applyStatuses(mine.associate { it.id to (it.status to it.note) })
+        c.providers.applyStatuses(mine.associate { it.id to ProvidersRepository.ReviewState(it.status, it.note, it.publishedVersion) })
     }
 
     val importer = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -150,6 +157,39 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit,
     fun requestSwap(line: Line) {
         val p = active
         if (p == null) swapping = line else scope.launch { swapDirections(line, p.meta.id) }
+    }
+
+    /**
+     * "Quitar de mis rutas": a route still waiting for review is first withdrawn on the server (DELETE), so no
+     * reviewer works on it and no row is left behind. Without a connection nothing is removed, so the phone and
+     * the server never disagree. Reviewed routes stay on the server (review history; an accepted one may
+     * already be on its way into the official data) and are only removed from this phone.
+     */
+    fun removeLine(prov: LocalProvider, line: Line) = scope.launch {
+        busy = true
+        val sent = prov.edit(line.lineId)?.sent
+        if (sent != null && sent.status == "pending" && !c.providers.sentIdShared(sent.id, prov.meta.id, line.lineId)) {
+            when (c.contributions.withdraw(sent.id)) {
+                WithdrawResult.FAILED -> { message = ctx.getString(R.string.remove_withdraw_failed); busy = false; return@launch }
+                WithdrawResult.REVIEWED -> message = ctx.getString(R.string.remove_done_reviewed, line.display)
+                WithdrawResult.WITHDRAWN -> message = ctx.getString(R.string.remove_done_withdrawn, line.display)
+            }
+        } else message = ctx.getString(R.string.remove_done, line.display)
+        c.providers.deleteLine(prov.meta.id, line.lineId, c.officialLines.load().lines)
+        busy = false
+    }
+
+    /** Deleting a provider withdraws its routes still waiting for review first (same rule as [removeLine]). */
+    fun removeProvider(meta: ProviderMeta) = scope.launch {
+        busy = true
+        val p = c.providers.load(meta.id)
+        val pending = p?.edits?.filter { (line, e) -> e.sent?.status == "pending" && !c.providers.sentIdShared(e.sent.id, meta.id, line) }
+            ?.values?.mapNotNull { it.sent?.id }?.distinct() ?: emptyList()
+        for (id in pending) {
+            if (c.contributions.withdraw(id) == WithdrawResult.FAILED) { message = ctx.getString(R.string.remove_withdraw_failed); busy = false; return@launch }
+        }
+        c.providers.remove(meta.id)
+        busy = false
     }
 
     fun export(meta: ProviderMeta) = scope.launch {
@@ -214,9 +254,8 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit,
                                         DropdownMenuItem(text = { Text(stringResource(R.string.edit) + " · " + directionLabel(v)) }, onClick = { routeMenu = null; onEditRoute(line.lineId, v.variantId) })
                                     }
                                     DropdownMenuItem(text = { Text(stringResource(R.string.swap_directions)) }, onClick = { routeMenu = null; requestSwap(line) })
-                                    DropdownMenuItem(text = { Text(stringResource(R.string.remove), color = t.danger) }, onClick = {
-                                        routeMenu = null
-                                        scope.launch { c.providers.deleteLine(prov.meta.id, line.lineId, c.officialLines.load().lines) }
+                                    DropdownMenuItem(text = { Text(stringResource(R.string.remove_route), color = t.danger) }, onClick = {
+                                        routeMenu = null; removing = line
                                     })
                                 }
                             }
@@ -249,11 +288,18 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit,
         }
     }
     deleting?.let { p ->
+        var pendingCount by remember(p.id) { mutableStateOf(0) }
+        LaunchedEffect(p.id) { pendingCount = c.providers.load(p.id)?.edits?.values?.count { it.sent?.status == "pending" } ?: 0 }
         AlertDialog(
             onDismissRequest = { deleting = null },
             title = { Text(stringResource(R.string.provider_delete_title, p.name)) },
-            text = { Text(stringResource(R.string.provider_delete_body, p.routeCount)) },
-            confirmButton = { TextButton(onClick = { scope.launch { c.providers.remove(p.id) }; deleting = null }) { Text(stringResource(R.string.delete), color = t.danger) } },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.provider_delete_body, p.routeCount))
+                    if (pendingCount > 0) Text(stringResource(R.string.provider_delete_pending, pendingCount))
+                }
+            },
+            confirmButton = { TextButton(enabled = !busy, onClick = { removeProvider(p); deleting = null }) { Text(stringResource(R.string.delete), color = t.danger) } },
             dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } },
             containerColor = t.surface, titleContentColor = t.ink, textContentColor = t.muted,
         )
@@ -269,7 +315,48 @@ fun ContributeScreen(onEditRoute: (lineId: String?, variantId: String?) -> Unit,
             }
         }
     }
+    removing?.let { line ->
+        val prov = active
+        if (prov == null) { removing = null; return@let }
+        RemoveRouteDialog(line, prov.edit(line.lineId), onDismiss = { removing = null }) { removing = null; removeLine(prov, line) }
+    }
     active?.let { p -> if (sending) SendSheet(p, onDismiss = { sending = false }) }
+}
+
+/**
+ * Confirmation for "Quitar de mis rutas". It says what happens on this phone and, when the route was sent,
+ * what happens to the copy on the server, which depends on the review state.
+ */
+@Composable
+private fun RemoveRouteDialog(line: Line, edit: RouteEdit?, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    val t = LocalPiyo.current
+    val sent = edit?.sent
+    val name = line.name.ifBlank { stringResource(R.string.line_n, line.display) }
+    val local = stringResource(if (edit?.op == "update") R.string.remove_body_update else R.string.remove_body_added)
+    val server = when {
+        sent == null -> null
+        sent.publishedVersion > 0 -> stringResource(R.string.remove_body_published, sent.publishedVersion)
+        sent.status == "pending" -> stringResource(R.string.remove_body_pending)
+        sent.status == "accepted" -> stringResource(R.string.remove_body_accepted)
+        else -> null // rejected: nothing on the server is waiting
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.remove_title, name)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(local)
+                if (server != null) Text(server)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(if (sent?.status == "pending" && sent.publishedVersion == 0) R.string.remove_confirm_withdraw else R.string.remove_confirm), color = t.danger)
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+        containerColor = t.surface, titleContentColor = t.ink, textContentColor = t.muted,
+    )
 }
 
 @Composable
@@ -298,11 +385,14 @@ private fun Badge(text: String, bg: Color, fg: Color) {
 private fun StatusLine(edit: RouteEdit?) {
     val t = LocalPiyo.current
     val sent = edit?.sent
-    val (text, color, icon) = when (sent?.status) {
-        null -> Triple(stringResource(R.string.route_unsent), t.muted, null)
+    val (text, color, icon) = when {
+        sent == null -> Triple(stringResource(R.string.route_unsent), t.muted, null)
+        sent.publishedVersion > 0 -> Triple(stringResource(R.string.route_published, sent.publishedVersion), t.primary, Icons.Rounded.Verified)
+        else -> when (sent.status) {
         "accepted" -> Triple(stringResource(R.string.route_accepted), t.primary, Icons.Rounded.Verified)
         "rejected" -> Triple(stringResource(R.string.route_rejected) + (sent.note.takeIf { it.isNotBlank() }?.let { " · $it" } ?: ""), t.danger, null)
         else -> Triple(stringResource(R.string.route_sent), t.accent, Icons.Rounded.CheckCircle)
+        }
     }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.size(14.dp))
@@ -441,7 +531,10 @@ private fun SendSheet(prov: LocalProvider, onDismiss: () -> Unit) {
                 q.resetsAtIso?.let { Text(stringResource(R.string.contrib_quota_reset, formatDayMonth(it)), fontSize = 12.sp, color = t.muted) }
             }
             when (val r = result) {
-                is ContributionResult.Sent -> Text(stringResource(R.string.contrib_sent, r.id), color = t.primary, fontWeight = FontWeight.Medium)
+                is ContributionResult.Sent -> Text(
+                    if (r.ids.size > 1) stringResource(R.string.contrib_sent_many, r.ids.size) else stringResource(R.string.contrib_sent, r.id),
+                    color = t.primary, fontWeight = FontWeight.Medium,
+                )
                 is ContributionResult.Blocked -> Text(stringResource(R.string.contrib_blocked, formatDayMonth(r.untilIso)), color = t.danger, fontWeight = FontWeight.Medium)
                 ContributionResult.QuotaExceeded -> Text(stringResource(R.string.contrib_quota_exceeded), color = t.danger, fontWeight = FontWeight.Medium)
                 is ContributionResult.Invalid -> Text(stringResource(R.string.contrib_invalid, r.message), color = t.danger)
@@ -455,7 +548,7 @@ private fun SendSheet(prov: LocalProvider, onDismiss: () -> Unit) {
                     scope.launch {
                         busy = true
                         val r = c.contributions.send(prov, picked, comment.trim())
-                        if (r is ContributionResult.Sent) c.providers.markSent(prov.meta.id, picked, r.id)
+                        if (r is ContributionResult.Sent) c.providers.markSent(prov.meta.id, r.ids.ifEmpty { picked.associateWith { r.id } })
                         result = r; busy = false
                     }
                 },
