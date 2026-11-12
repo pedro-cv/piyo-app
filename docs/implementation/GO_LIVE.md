@@ -118,7 +118,7 @@ into the image). **Own VPS** when traffic justifies it: `DEPLOY_VPS.md`, summari
 | `GEOCODER_URL` | `app/keys.properties` | `https://photon.komoot.io/api/` (self-host Photon past ~10k MAU) |
 | Cleartext | `app/app/build.gradle.kts` `manifestPlaceholders["usesCleartextTraffic"]` | `false` |
 | Signing | release keystore created with `keytool -genkeypair`, kept outside the repo; paths and passwords in `keys.properties` | required for Play; today release signs with the debug key |
-| Version | `versionCode` / `versionName` in `build.gradle.kts` | bump per release; `MIN_APP_VERSION` on the server gates old builds |
+| Version | `versionCode` / `versionName` in `build.gradle.kts` | `versionCode`: Play-only counter, +1 on every upload. `versionName`: public semver shown in the store and sent as `X-App-Version`, bumped when the release changes; `MIN_APP_VERSION` on the server compares it |
 | Play Console | $25 one-time; data-safety form says "no data collected" except the anonymous hashed id for abuse control; privacy policy URL = the landing page section or a static page | — |
 | Landing | `landing/src/data/site.json` → `playStore.url` | set when the listing exists |
 

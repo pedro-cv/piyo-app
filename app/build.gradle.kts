@@ -40,14 +40,19 @@ for ((name, shape) in firebaseShapes) {
 
 android {
     namespace = "bo.piyo.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "bo.piyo.app"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // Play requires targeting the latest API level within a year of its release (API 36 since 2026-08).
+        targetSdk = 36
+        // versionCode is for Play only: a counter that must grow with every upload, never shown to people.
+        // versionName is the public version (store listing, X-App-Version, MIN_APP_VERSION on the server):
+        // semver, bumped when what people get changes. They move independently, so a rebuilt upload of the
+        // same release bumps only versionCode.
+        versionCode = 3
+        versionName = "0.2.0"
         vectorDrawables { useSupportLibrary = true }
         // Plain HTTP only for a local backend (http://10.0.2.2:8080, http://<PC-IP>). An https:// API turns
         // cleartext off: an http:// URL to Cloud Run gets a 302 to https, which OkHttp follows for GET but
@@ -73,14 +78,33 @@ android {
         resValue("string", "app_name", "piyo")
     }
 
+    // Play upload key, configured outside the repo in ~/.gradle/gradle.properties (PIYO_UPLOAD_*).
+    signingConfigs {
+        create("upload") {
+            (findProperty("PIYO_UPLOAD_STORE_FILE") as String?)?.let {
+                storeFile = file(it)
+                storePassword = findProperty("PIYO_UPLOAD_STORE_PASSWORD") as String
+                keyAlias = findProperty("PIYO_UPLOAD_KEY_ALIAS") as String
+                keyPassword = findProperty("PIYO_UPLOAD_KEY_PASSWORD") as String
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signed with the debug keystore so a release build can be installed for performance checks
-            // (`gradlew :app:installRelease`). Replace with a real keystore before publishing.
-            signingConfig = signingConfigs.getByName("debug")
+            // Package native symbol tables in the bundle for Play Console crash/ANR symbolication. Today every
+            // .so (MapLibre, androidx graphics, DataStore) arrives from Maven already stripped, so there is
+            // nothing to extract and Play keeps its "no debug symbols" warning; this only takes effect if a
+            // dependency ships unstripped libraries. Needs the NDK (SDK Manager → NDK (Side by side)).
+            ndk { debugSymbolLevel = "SYMBOL_TABLE" }
+            // Upload key when configured, otherwise the debug keystore so a local release build can still be
+            // installed for checks (`gradlew :app:installRelease`).
+            signingConfig = signingConfigs.getByName(
+                if (findProperty("PIYO_UPLOAD_STORE_FILE") != null) "upload" else "debug"
+            )
         }
         debug {
             isMinifyEnabled = false
