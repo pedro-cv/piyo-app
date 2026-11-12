@@ -24,7 +24,7 @@ Contents
 |---|---|---|
 | JDK | 17 (any 17.x LTS) | `java -version` → 17.0.20.1. Android Studio also ships one at `C:\Program Files\Android\Android Studio\jbr`. |
 | Android Studio | Ladybug 2024.2 or newer (any version bundling AGP 8.7+) | installed |
-| Android SDK | compileSdk 35 (`platforms;android-35`), build-tools 35.0.0, platform-tools | `%LOCALAPPDATA%\Android\Sdk` has build-tools 35/36/37 and platforms android-36, android-36.1. **android-35 is missing**: either install it (SDK Manager → SDK Platforms → Android 15 (API 35)) or bump `compileSdk`/`targetSdk` to 36 in `app/app/build.gradle.kts`. |
+| Android SDK | compileSdk/targetSdk 36 (`platforms;android-36`), build-tools 36.0.0, platform-tools; NDK (Side by side) for the release bundle's native symbol step | SDK Manager → SDK Platforms → Android 16 (API 36). Google Play requires targeting API 36 for new uploads. |
 | Gradle | 8.11.1 via the wrapper (already in `app/gradle/wrapper`) | downloaded on first `gradlew` run (~130 MB) |
 | Kotlin | 2.1.0, AGP 8.7.3 (pinned in `app/gradle/libs.versions.toml`) | downloaded by Gradle |
 | Go | 1.25.x | `go version` → 1.25.6 |
@@ -255,7 +255,7 @@ Not wired yet. When you do: create a fine-grained personal access token limited 
 | # | Symptom | Cause / fix |
 |---|---|---|
 | T1 | `Could not find or load main class org.gradle.wrapper.GradleWrapperMain` | `app/gradle/wrapper/gradle-wrapper.jar` missing or corrupt. In Android Studio: File → Sync; or run `gradle wrapper --gradle-version 8.11.1` with any installed Gradle; or re-download the jar from `https://raw.githubusercontent.com/gradle/gradle/v8.11.1/gradle/wrapper/gradle-wrapper.jar`. |
-| T2 | `Failed to find Platform SDK with path: platforms;android-35` | Install API 35 in the SDK Manager, or set `compileSdk = 36` and `targetSdk = 36` in `app/app/build.gradle.kts` (android-36 is installed). |
+| T2 | `Failed to find Platform SDK with path: platforms;android-36` | Install Android 16 (API 36) in the SDK Manager → SDK Platforms. |
 | T3 | Version-resolution errors for AGP 8.7.3 / Kotlin 2.1.0 / Compose BOM 2024.12.01 | The pins were chosen from memory, not verified against Maven tonight. Open `app/gradle/libs.versions.toml` and let Android Studio's "Upgrade Assistant" or the hover hints suggest the nearest existing versions. Keep AGP and Android Studio compatible (AGP 8.7 ↔ Ladybug+). |
 | T4 | `Unresolved reference: FlowRow` or `ModalBottomSheet` | Compose BOM too old; bump `composeBom` (FlowRow is in foundation 1.5+, ModalBottomSheet in material3 1.1+). |
 | T5 | `Unresolved reference` in `MapLibreMapProvider` (`org.maplibre.android...`) | MapLibre 11 renamed packages from `com.mapbox.mapboxsdk` to `org.maplibre.android`. If the version resolves but names differ, check https://github.com/maplibre/maplibre-native/releases for the 11.x API; `getSourceAs`, `GeoJsonSource`, `LineLayer`, `CircleLayer` exist in 11.x. |
